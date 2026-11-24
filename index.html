@@ -1,0 +1,2013 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ryntax All Tools – Kumpulan alat utilitas online</title>
+<meta name="description" content="Kumpulan alat utilitas online yang cepat dan gratis: penghitung kata, generator password, pengubah huruf, kalkulator persen dan diskon.">
+<script>
+  // Terapkan tema sebelum halaman tampil agar tidak berkedip
+  (function () {
+    var dark;
+    try { var s = localStorage.getItem('alltools-theme'); dark = s ? s === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches; }
+    catch (e) { dark = false; }
+    if (dark) document.documentElement.classList.add('dark');
+  })();
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = { darkMode: 'class' };</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #f4f5f7; --surface: #ffffff; --line: #dfe2e8; --ink: #17202e; --muted: #5d6879;
+    --accent: #2f4bff; --accent-ink: #ffffff; --accent-soft: #e8ebff; --field: #f9fafb;
+  }
+  html.dark {
+    --bg: #0f141b; --surface: #171e28; --line: #2a3442; --ink: #e8edf5; --muted: #94a0b3;
+    --accent: #7f93ff; --accent-ink: #0d1230; --accent-soft: #212a52; --field: #121820;
+  }
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+  body { background: var(--bg); color: var(--ink); font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  .surface { background: var(--surface); border: 1px solid var(--line); }
+  .muted { color: var(--muted); }
+  .field { background: var(--field); border: 1px solid var(--line); color: var(--ink); border-radius: .6rem; padding: .6rem .8rem; width: 100%; }
+  .field:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .btn { background: var(--surface); border: 1px solid var(--line); color: var(--ink); border-radius: .6rem; padding: .5rem .9rem; font-weight: 600; font-size: .9rem; cursor: pointer; transition: background .15s, border-color .15s; }
+  .btn:hover { border-color: var(--accent); }
+  .btn:focus-visible, .chip:focus-visible, .tool-card:focus-visible, .icon-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .chip { border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 999px; padding: .35rem .9rem; font-size: .875rem; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .chip:hover { border-color: var(--accent); color: var(--ink); }
+  .chip.active { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .icon-btn { background: var(--surface); border: 1px solid var(--line); border-radius: .6rem; width: 2.5rem; height: 2.5rem; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); }
+  .icon-btn:hover { border-color: var(--accent); }
+  .tool-card { text-align: left; cursor: pointer; border-radius: 1rem; padding: 1.1rem; transition: border-color .15s, transform .15s; }
+  .tool-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .tool-icon { width: 2.6rem; height: 2.6rem; border-radius: .7rem; background: var(--accent-soft); color: var(--accent); display: inline-flex; align-items: center; justify-content: center; }
+  .stat { background: var(--field); border: 1px solid var(--line); border-radius: .8rem; padding: .8rem 1rem; }
+  .stat b { display: block; font-size: 1.6rem; line-height: 1.2; }
+  .tabular { font-variant-numeric: tabular-nums; }
+  input[type=range] { accent-color: var(--accent); width: 100%; }
+  input[type=checkbox] { accent-color: var(--accent); width: 1.1rem; height: 1.1rem; }
+  #toast { position: fixed; left: 50%; bottom: 1.5rem; transform: translateX(-50%) translateY(1rem); background: var(--ink); color: var(--bg); padding: .6rem 1rem; border-radius: .6rem; font-size: .9rem; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; z-index: 50; }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  /* ===== Tema Neo-Brutalist / Retro Card Grid ===== */
+  :root { --bg:#FFFDF0; --surface:#ffffff; --line:#111111; --ink:#111111; --muted:#4a4a4a; --accent:#FF4FA3; --accent-ink:#111111; --accent-soft:#FFF3A8; --field:#ffffff; }
+  html.dark { --bg:#1b1a14; --surface:#27261e; --line:#f5f0d0; --ink:#f5f0d0; --muted:#b9b49a; --accent:#FF6FB5; --accent-ink:#111111; --accent-soft:#3a3920; --field:#1b1a14; }
+  .surface, .stat, .btn, .field, .chip, .icon-btn, .tool-card { border: 2.5px solid var(--line); box-shadow: 4px 4px 0 var(--line); }
+  .stat, .field { box-shadow: 3px 3px 0 var(--line); }
+  .field:focus { outline: 3px solid var(--accent); outline-offset: 0; }
+  header.surface { box-shadow: none; background: var(--accent-soft); }
+  .btn, .chip, .icon-btn { font-weight: 800; }
+  .btn:hover, .chip:hover, .icon-btn:hover { border-color: var(--line); transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--line); }
+  .btn:active, .chip:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--line); }
+  .btn-primary { background: var(--accent); color: #111; border-color: var(--line); }
+  .btn-primary:hover { filter: none; }
+  .btn.active, .chip.active { background: var(--ink); color: var(--bg); border-color: var(--line); }
+  .tool-card { border-radius: .6rem; padding: .85rem; color: #111; }
+  .tool-card:hover { border-color: var(--line); transform: translate(-2px,-2px); box-shadow: 7px 7px 0 var(--line); }
+  .tool-card .muted { color: #2b2b2b; font-size: .8rem; }
+  .tool-card .chip { background: #fff; color: #111; border-color: #111; box-shadow: none; font-size: .7rem; padding: .1rem .5rem; }
+  .tool-card.c0 { background: #FFE14D; } .tool-card.c1 { background: #ffffff; } .tool-card.c2 { background: #FF8AD1; }
+  .tool-card.c3 { background: #9ADBFF; } .tool-card.c4 { background: #A8F0C6; }
+  .tool-icon { background: #fff; color: #111; border: 2.5px solid #111; border-radius: .5rem; }
+  .badge { display: inline-block; background: #111; color: #FFE14D; border: 2px solid #111; font-weight: 900; font-size: .6rem; letter-spacing: .04em; padding: .05rem .4rem; margin-top: .3rem; }
+  .badge-lg { display: inline-block; background: #111; color: #FFE14D; border: 2.5px solid #111; box-shadow: 4px 4px 0 #FF4FA3; font-weight: 900; letter-spacing: .05em; padding: .3rem .8rem; }
+  html.dark .badge-lg { background: #FFE14D; color: #111; box-shadow: 4px 4px 0 #f5f0d0; }
+  #toast { border: 2.5px solid var(--line); }
+  body { background-image: radial-gradient(rgba(17,17,17,.13) 1.2px, transparent 1.2px); background-size: 18px 18px; }
+  html.dark body { background-image: radial-gradient(rgba(245,240,208,.1) 1.2px, transparent 1.2px); }
+  .tool-card { position: relative; }
+  .fav { position: absolute; top: .45rem; right: .45rem; width: 2rem; height: 2rem; background: #fff; color: #111; border: 2px solid #111; font-size: 1.1rem; line-height: 1; cursor: pointer; }
+  .fav:hover { background: #FFE14D; }
+  #auth-pop { position: absolute; right: 0; top: calc(100% + .6rem); width: 17rem; z-index: 60; padding: 1rem; background: var(--surface); }
+  body { overflow-x: hidden; }
+  pre { overflow-x: auto; }
+  textarea.field { resize: vertical; }
+  .stat, .tool-card h3 { overflow-wrap: anywhere; }
+  .btn.copied { background: #A8F0C6; color: #111; border-color: #111; }
+  #toast { max-width: 90vw; text-align: center; }
+  @media (max-width: 480px) {
+    #logo .badge { display: none; }
+    .field { font-size: 16px; }
+    .btn { min-height: 2.5rem; }
+    #tool-root { padding: .9rem; }
+    .tool-card { padding: .7rem; }
+    .stat b { font-size: 1.3rem; }
+  }
+</style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<header class="surface border-x-0 border-t-0 sticky top-0 z-40">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+    <a href="#" id="logo" class="flex items-center gap-2 font-extrabold text-xl tracking-tight" aria-label="Ryntax All Tools – beranda"><!-- Ganti src dengan "logo-ryntax.png" jika file logo diunggah bersama index.html --><img id="ryntax-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAACgCAIAAAAErfB6AAAm7UlEQVR42u19eXxU1dn/OffemYSQBDIhG5CFPYAsCUQghkV2BIFWKVQWLSJYhEqhpYgvlV9LROrHpWCJioCKCARbQPF1KYrwq7LJGpY0soSE7CRkz8zce855/3juPXMzSzIJCUziPMU0M3Nz557zPc9znv0g5CUvNYiwdwq85CUveclLXvLusl7ykpeaWx54BYKXvOQlL3nJq9h6ybsyPF9lsxG8wzRyepndNXaXeQH2LEQppZTSu7ybKIoIIUpp68Abt1xcBUFACBFC9O/7+bXp2LFT586do6OjO3XqFB4eHhoa2q59O782fpLBgBGjlMmyXF1dXVFRXlJyJz8vLzcv7+bNm9nZ2bm5ueXl5fq7iaLYJOvGC3DDcGWM8RkXBKFH9+7x8fEJDz74wAMPdO/eIyIi3NfXt6F3VhSlIL/g+o3rly9fPnPmzJkzZ9LT0ysrK/kFkiS1RKRbDMAgOTm/hoaEJA0fPmbMmKSkpNhesUYfo/5iQgijDGHEZSxGGMaKEWIIIYYYYur4MRYEAeSBnrKysk6ePHn06NHD3x2+mHZRL8MJIS1FeuMWwbKwIyKEgoODJ0yY8Mtf/nLkiJEdQjro+Y9RxhDDGCOGEEYYw38II4wFTZ9iiNXSqBjGGsqwAjTg9ZATQs6dO/fll1/s27f/9OnTfMHpBYmXGq/vAA0fPjwlJSU3N5djI1tli9liMVusFquiEFYnUUoURSF1XkYJla2ybJUVRSGEEIXIsixbZf0F//nPf5577rmIiAi+QTiyvpeD3RLIII19jD4zfjVj0aJFSUlJKrPKCqFEEARJkrDOkV1dXZ2Xl3fr1q3MzMycnJy8vLyCgoLS0tLq6uqamhqLxUIJEUTRaDT6+voGBgQEmUydOnXq2LFj165du3TpEhUdHdS+ve0JGFIUBWEkCAJGmDJKKeXfWFxcvGfPni1b3j137jzADIq3ly3d3WsRQn5+fosXL05LS1P5VZFramr0/EQIycjI2L1nz8qVK8ePHx8TE+Pj49PYZY7Dw8OTkpKWLHnuww8/TE9PJ5qZxBiTZVmWZUopJVRRFEVW+Pt79+4dOmSIXuX2IuiSBEEAdAVBePrppy9fvgzzaK6psVgsfLpzcnJSU/cuWrSof//+joiCYJckSZIkUSOhNsGbkkb6jQDIaDQOGDBg2bJlX331VWVFJZfPVqsVFGlFUfhSI4Ts3r27b9++dgvUS84Zd/z48d9//z3MXU11Dcf1+vXr77zzzuTJk4OCguz+EEASBKHRDAR+En4r/UddunRZumTJ0aNHmcbTVosVtGjYs0EBrKqs2rDhlfbt23tZ2Qnjwh4WExOzY8cOFdoaFdrS0rLU1NRp06a1bdvWDtS7QdQd1R2+gr85dOjQd999t6SkRIVZtoLKRinl3PzTTz/98rFfelnZCeM+s2BBUVER8AdMVnp6+osvvhgTE6O/+N4zh502Fx0dvf7l9QUFBXwbpoQCzPzJt7z7LrCyJEk/azMI0I2Kjv70wAHGuAhkx48fnzdvnp9fm/uIax0qAkKoY0TEq6++WlFRyRhTFEVRFBDUfG++cuXKQw899PMV11y6Tp06LTfHZtqePHly5syZgoC5dxDjZrQycWOWJeZ8GdsrNnXPHlViW62UUkYZo8xqtcI7zz33HEJIwJiP6GckljHGGzb8jUN75fLleU/OE7U9r/kWPm4a6WNzwkybNu3q1auMMVlWVOWLUllWKCGMsY0bN8JG7uH+kCZGNzQ09LNPPwNoS4pLVr+4uq2fnw3aFmTXCQJCyBQUtGXLFhiOIivAx4QQYOXPPvssICAAISS2eoxBuD3Q94HLl1Qb95NPPunWrVuLVjv5Y8+ZM6e8vFwvrimlYMH/8MMPwcHBrZyPAd2RI0cWFhYyxm5cvzFz5kzdXtuCdym+McfFxYF/hrtE+JZ86tSp1owxjH/yI5PNZjNjbNeuj8PDw1FLcNY3dIzBwcHffPONHR+DBXXs2LGAgAB9qlCrQnfq1KmMscqqyqeffloTbo0xEz15bkBcG43GPXv26PmYUtW+P3jwczC3Wg/GnHdBTPXv3x8hJAj3eYTN992CIEAk+qOPPrJhzCjTMN64cWPr8YGo++6IkYyxDz74oE2bNvd9bLj5ZYAggJ2P96buVb1dlDGqhisYYwsXPoMQEqUW7ssEeTVwwMDqquo//vGPLVpVbpwnx2g0fvvtt4wxK0QbKSWEKIpiNpsHxg1ECImi0IJHiBCKiYlJS0t7/PHH0c/PaQczYDKZLl++Al5MzQciM8bOnz/v26aN0ELnBB66ffv227dvT3ooCSFkNBikJiFRtIV5m5kEUQBXBv+pSl63IQFx1bdv37LyMsgBAj4Gf/W6dX9tqSJNEASj0Thr1q97x8ai1hhUAcMXgtDuaCGzZs2CJDK9oLZYLKByNivGuDkGzxgzmYJFQSi6XWSQJFlRYmJi5s2dW1VVxdS0RcwYVasHKGMIUUrgD0GOYYzBr8sYo4QgjBkCPYVAtip8ghBWFEXNTWcUUiYRRuAphPtA0gUk0ELaFNO+FV7CnOtSdHgNiy01FlCxWMzl5RUlJSVms1k/XlEUCKGuEmklSVIU5R//+MfixYsVReH5v5IkHf728Ogxo0VBIC00nwtkmiAIbf3aHjhwgLVkAr9jWVnZ1atXv/32240bN86ePdsuXO1UesMM+Pv7Z2RkMEohtkgphdyu6dOnNysT42aVY7Co+S/79+2fNn2a2VwjSQbGGFT3A0Orz8IQwgwzfYq69ozM2fPa/hQjhCAvmn+p7RrbzR10BVZrJrD+Cqz7Cp5rXZsqKip//PFUauqeTz755+3bt5EuH9RuMyaEjB49+tChQ5RSnoUpCMLly5fj4+NBBWvBpVDAyv7+/ieOnwDzH3x4zUVE99PpL/wlcXip/6e/FbGRoshWq1Wf4pmbl7tu3bqQkBCEEHaWSwSb8c6Pduq9H8DEs2bNQghJLd2AhGBZWFhY+pUrmvnvAElTQevOPQlt/APoVoY+OT47O3vhwoVOLX5Y4tHR0aWlpbBKqCauT58+09LDLbXMhp49e+bn59tjTBqOn8NHjVsk4GNy8nZ9z6C/ghDCc7L2798PpQ9SbV8VDP+vf/krjJ3BNyuEMTZmzJhW4gWCMTz44IPl5eVUp3HcZ2ogN7sCnygEuPn69esJDybYmYjAxCEdQoqKiuBiSlXn5d69e1GryQiAMU+cOFGW1SqgJoDE6UeENOUKIHXjbQMdMCsvK3PkS9ho165dqzIxYyBCKisrIyM7o1YTLTYYJITQnNlzIMeFEs/gXTf2bEYZc3WxTXSr4FVUVAwZMkTPmsDEHSM6lpaW8T8Bpv/d737XqpxCMJJly5apWqWLySWE3Hf5ba/wu/dIAFt2dnZERATvR8AZ+r333uMDh9Vw9MgRhJDQmtz1gHFycrLNciB1CkPiYP/czZ5K3JPzdtASN9eELVnn4MGDSJdMKIoiwjhhcIJteyKUUVZTU9O1S5cml9L3U21jjEmSdOjQoU6dOickJMhWGZwVLjxJ8EP7n+ZdYk61HlbrPcaYnh3VP3H2RYghuLn6HDa3JkNMc3TUy2NMrScXsKDISmzv2JuZN8+ePQs144wxjHFuXu7kRyZ3juxMKRVEQSGK0Wg8c+bM+fPnRVFsPZWoAsbgsv/ss88831tJCJFlufauQeqQGYwyRSGU0szMzIAAfx6JAtG1YvkKLqWB17dv397kxtL9l/jgXPTz85s6dSqMX43PYdWPjQWMEebVZlD7KWCEBUEQRW2JiIKAtWJRURQFo9EoSpKIBckgQaQPnAkYY4PBoL4jioIoQpKUoP2fKEkQFOQ3RwgbDIbQ0NDw8DB4ZkUhtlg9Q7xtBENOfI2UUlEU58+fv337dgg8QFOKHj16pKWl+Rh9QDKJonjp0qWBAwcqisK9tB4cUGt4/NjD44PBJlNiYmJy8suQ9itbZZdbe21SZIVS+v1//qOvcIWldvzYccgFgH2kpqama9euLclYch85jTVFu+rsJsoSECVneQKCA/Geaho/Y8f12rlz510ff8wxVjd416o1iHSr1dqnd28OHkjp9evXcwUT2oxMmDC+Bbi0MEaSKMbHD2pxOcB8nfF3Avz9fX18tApxwaDZqa+sX1+HEc9Aj9YUdTCEnnnmGQ4tfMXEiRM5B4NZtWzZsqa1hpteFIiiyBhKShoeFRXJGGsR0oaX94MmRQgxmUyDBg0aOmxoaFgotSlZVFYU2ORXvfDCgf0HREkklECoUr9tMrvXCCGEBg4cqNuYGULo/Pnz5eXlXLtGCHXv3r0FKMaCIGzdurVTp04evr9yXPk7Pj4+48ePX7169dKlv0tISPDTSuLsxyiKGOOoqKg7d+6oQpjU5fyCcO+XX36p319BKpw+fVrt82KVIVDRtCJaanL2JYRMmjgpPDw8JycH1EUPxJX3uYTgvCAII0eOnD59evfu3S+cv7D3k71nzpzRK/n2ijEhkiRmZWUdPHhwzpw5iqJIBsmJ4mtrvoYQQuHhYZCdA/cUBIEQcvnSpfj4eMQQFjBCKCw0DBTvplKkmxhgmIsVf1hx+JtvYOI8B2BQo7gQRgj5+vo++OCDM2fOnDJlisVi2bVr17PPPpudnc3Zi3fYc7FO8OHDh+fMmaOKaJf2hPqZn19bySARi1WvgV66dFmvxZmCTWBKYYyRpyV4AFt079adEJKQkOAJ2iDGWBDtW6aZTKbJkyenpKSAwZOenr5gwQLekcmdXEk+tPHjxjPGSH0xMRDR6enpBoOBQytKEkJoxowZIKIhu+PWrVv+/v5NuLVJTQswpXTevHnVNTUXL15E96/5myqEMSIKYYRRRBFC3bp1GzFixNixY8eMGRMWFoYQ+u677954441PP/1Uw0yCxBz3v8g/wB8hRBkTBcHO0eEoY6uqqmRZ5nIOGDQ3J1e/MRsNRh8fH32XW08BGCNECBEEce68uRfT0mpqau69fHbcXI1GY3x8/NixY8eNGxc3MC4gMADm9+OPP960adPx48c5O1JKCVEaauL369ePA2bnxtJn88EFxcXF+m0L3iy6XaQoiiRJlFCEkCiJTRsxbDqABYFS+kDfPjExMZ8fPHgvN2BHXNu3b//QQw9NnDhx3LhxvXr14leWlpbu2rUrJSUlLS0NadFZ/lcNda8KgjB92nSEkFBnpxieYP3fjAzHaamsrKqurg4MDOTJoLghTMXuGcDw3OPGjWWMpV28eF9wNZmCHn549LRp00aPHtOpU0f9xYWFhTt27Eh5O+Xa1WvorpsBS5Iky/K8ufMGxg0khAiuash4Vi/GCKGzmmauV0jNZrPZbAkMtDmuZcVdQXJPdTCY6/379zPGJk6c2HwalqOzqV1gu6mPPvree+/l5OTwyA9vb3nz5s21a9eCUe6+DlXHt4OiFBsbW1RYBEUojsavXueC3y1WC8gSvR2MEGrXrh30SFZkmTGWfSu7aZWspvQ5t23bNjv7FmNMq/IWmhVXk8k0bdq0bdu2ZWVlc1zNZgt0iYDGgsuX/7691tvSYDA49T/XTaIo6N3XcKv4uPjMG5ncy+gi2sB4Xi2l9MfTp1Vfd+1JCwwMvHXrFni2GWOXLl2CefMsgOGZ4uPiIBGpc+cmyx9zxLVDhw6PPfbYhx98qG8OrshKTY0ZXL6MsVM//jh//nxgBVC1mmqkQUFBf1q5sqKiwgW6TpzS8FRQIa1XoDgHg+CBkPCRI0eaFl2pqQCmlPbu0wchdOfOnYqKCqQv3WrsPfUaUIfg4IdHj37sscdGjRoFRg5CSG0HyphBEn19fRBCR48efeutTfv+tU+BfuI+PhaLxWq1RkREGAwSV2J44FkNOWOMMdKqRDGcASAKAoa3RNHPzy8ysvOwYYlTpkwBaU8IEQURat3qIAj0lpaV7dixw6ndKEkSrD+Yrtxc1WpqqN53L+zg3r37gNZgsVju0t8EzIEQ8vf3HzFixIwZMyZNnBTG4+2yAjkxDDFRkiSMGEKff/75pk2bvvrqK4QQxsjXx8dssVgslsjIyFWrVj3xxGxRFGqd36C5q7hItIULa9co2ZGiKAIWREFgiDktedITIcRgMLy/bVt+fr5d2RLPdNCfEXPt2jVPdOCDCE1NTYXadd6ssEGy2E4UJw5LfPPNN69fv16r87pVJgqB1BlNmbLuSd0zbNgwPmtGoxELAkIoICDghVWrbt++3ZAawto5XoRqxUiKLMuy1erSY0WcxBjgb/Py8sPCQgWM7TImYWH169ePB4wZY08++SRqvuRZfBc7JULo6JGjjLFz587pxaCbuyx/GR0d/fzzz588edI+E0pRtVOYCMZYZWXl1q1bBwwYwOfLYJB4CdesWbOuXEnnK0MtsCf6ErJaBOVlVP/SMXWX1FfrQHRptlqm1bx585zaFPDOqFGjGFNTtyilgwcPRp5W4gBAGgwGmNALFy64CbAgCLx6B2M8duzYnTt3lpaW2c5AkWVFUSPqcAaK2t6ypOT111/v0aOHOlOCoI/6jRo16ttvvtVD27B6iDredZElb5e1qa9v+Oijj5CLhjrwwL/5zXyuYRUWFECjaU+0kUwmU35+AWPs4sWL9Ypofe9lk8m0cOFCPcvCwTZ8BkE8wkd5eXnJycnRUVGcCSDBB1726NHj/fff59Dqb+JuNnUTpdkDYMeOHWvTpo2rzvQA8Kuvvso73B86dAh5YEIWPFB0dBQYD9euXYN+WE5HpYe2a9euycnJ2ZoVSwiRrbUYTs+12dnZL7zwQkhoiDY7ajYkfEewKXj9+vXQC5QoRAYDpsH82pTonjt3LjQ0tA7A4P0vvviCn06x9v+tRZ5WvYK1B+3WrVtVVRVjrKCgICSkgyPA+r22d+/eKSlvAx6OLMso00N748aNP/1pJXTyRFqnBL5QJElasGBBZmamrTE3caPkoaG1EfV9xGzCRmGMHT16FIrBXaELk9OmjR88OQx25MgRyAMz7lSAu3arqqpmjJnNZtgd9T45/tB9+vTZunVbdXW18z2SUjjKBD7NyspesWJFu3btuEwDQ4bfbeKEiSdOnNCglbXUxntTzsTsUif5inzn3XfB8qlD2Kquofh4QgjkU2ZmZtYh+TxBREcDBzPGhg8fzlciByMqKurvf99og9ZqD61eQ87JubVq1SqTycQjtWCfciW5V69eu3fttq0SpSGgEhdVZWp2Fam3wInp9my9inDz5k3ox1DvVgpyeOmSpXwD3rx5M/LMhFlYcREREWVlZaBSQn6o0WgUNHv0z2v+XFxcbDuppHZdvX75FxYWrlmzhh88KWmta7iq0r5du3Xr1oF4h3PIGsexzJViTOqXzNwy5ochltwp2bBhQ4cOHUCrd8eCQAhBwQ4s65EjR3o0wAH+/rdu3YKqsJSUzfxBZzw+Iz09XX8IjTpTjFJGefEkY6ysrGzDhg0dO3bU77VIq1+CN2c/MRsOSND3FbOv2+RkdfiFv7SC38Kq/m6VZatsVUm2Wq36T606gj1F7xr573//+9JLL0XpFHs3ZywkJKS4uAQExoW0NIPB4LEZqGrM88yZs/zwFIRQ3759Dx48yHUfEMh2wg043mw2p6SkQNUGqt0Ans9XQkLC119/rb+bkz49vLlaM1NZWdnp02feeOONcePGtmnja7ci3QknY4xnzZzF5fPy5cubSX9ukjsyCDYUFhaC07xb125/+9urixf/tm3btkQhCNsenTGEMGKIMUrBfk1NTU1OTr5w4QLSUmcUReFCDHLQV69e/fzzz0uSBL5cuJuaIqN3BTOEMT5x4kRBfr5kMMDDgGcKpp5LC14BRilViCJbZYQxpRTKRQmlCDEQvwhjRVYYYrJsrSivyM3NzczMvHbtWk5Ojh4w8JG5OV+wCmfPmQ0Ootu3b+/48EPkcFy9BxHM+DvvvANHl3E2grqr2p4E23Z76N//htOjHOPwfEHMnTvnxo0bmmOrnvAcQAIJnfdi1KLUiBa6cF5tjx49qqtrINvyL3/5C/LweiTAY/ny5byUyon9Q6miQXvx4kV+IgfE4O2ihAihHj16Hth/wMnmXQfAhDDGRowYIYqiwWAQRaEJhZ5BkiBl4C77IoMh8Morr4AgKSwqCgkJ0fd48EARrcYyL1zQMtlgPTJNpUCIUIIxFiWpuLg4OTn57bffrqmpgd73hFD9QgHhuWLFiv/5nzXt2gWqsTl1dbuOzDHbTy2/UyCEDh2S8PL69dXVVfAtEKGDjqbcvaCPaugP+8YCJoQqiixJ0u3bt1/6859lWb7LTEKMBUJpUFDQk08+CXXDLycnFxUVOW2A6ElaloARQuFh4WVlZTBTTh0XW7dujY6OdqptcvdFbK/YI98dgcidKz3ZRdMkVUSPGDGCy3xJkqBn0d3Tvn37wBFxN6EeGOOfVq6Ee547e87Hx6f5jlFtemPphx+O6XNZwAHJGDt79iw0jULOTkniI5w3d15JyR19ypzbvcgYB5i7WTBCUOC7cOFCUA4sFotTewlsIf3PWr/IssVsYYx9+803gYGBjY4HwDBNJlNBQQFY0onDElFLaXAHu93fNvyNV0aD/a4oyrp169S1L4rYYWpgeAZJ+vvf/86tIMZYcXFxRUVFQ1rgqHtwUlIS0nW1gQdbvHhxrSwqoqvidc+5AU919Oj/hxOqG4GKPnzUMnQrR5wmTJjAQ3WMsbS0NOAnVyOBMXfu1Pm7w9+pORuyTCktKysbO3YcpBvW74a0ecQoYyxpeJLd10HV9vz58wFj2w1dSQgXaRvQjfLEiRMQSGgQNoIoIoQGDBgAhu8XX3zpIcfmNtCfFRBw82YWrNBt27aBQHPVShXQHT58eGbmTe6+gA172vRpBoOh9E6pbUcndbbBIjYtmh/c6/hdTz31lGoZa4d3U73z2Y3wEWB89uxZOLnNTYz52XeHDh1ijF29erVZNefmZWI4hxPc0a6mAHIWEUJz586FFQ1MD2IQ3DqRkZElxSVuAVxbRCcmOt/YYIpnz56tNX1uuAtb13nw0qVLoDC60+dZ39YvLzcPKprugXBuYuEABtKQB4dMnTq1DtcdX7Yvv/wyP2mGtzzfsGEDXBMaGlYLYP0cO+3+SygodEOHDnU1fSCrZ86cCV3m7BKbiXvRYq4lZGRkdO3SFWmFoHWv+379+isKKSoqUrOuxFZxKpar9/39/Xfv2qPuiFqUsLCwcPYTTyDtTMPQ0NCSEkeAnXWvJLb0R8YYZFi6egBgpscfexw2+0b0M4Y2hbxtcN0ny4DmHBDgfzPzZlZWVlxcHGrpHUf1STlOJzcmOgYysCwWq6Jlbhw5cgQOEhZFEdJLXQFch6DWAB5aN4vAY0yfPt1itUIDDdeMy+oqWdDajT7Qt69T2LgAO3H8xIULFyIjI1sM7zZCuMP4H3roISglApUKJPOmTZugoguuwW4CbBe0d0NE2z3M5MmTa6prtAr8xgSVYXXm5ubGO7AmjMLHx2fHjh07d+6EDgKt82Q/7qWaNWsWZHSoicqEMMZ+//vfI10tqA7gMHB61NNRmNhzsDsAczAmTJgAWp7ikKfH6mhs5tAaurCwEIIc6hpFSBCENm3aLFiw4IknnrBTPloVcS/VqlWreIiJ8y6cJWxnR9XJwazeYMOQoUMQQoIb5z4CGGPHjq0or9BiX6y20kWcHwxRO8EdxnL7djH4WCRJgsH4+/uDV6RlOCMbo2oJAgwvJSWFMSZr0MKMwAElIJwdty43RbSdqsXDhW6yi3bw/KhaBYN6w4zU/6X8lKvy8vKRI0bYyepWe+AqDKxdu3YHPzvIw4hWLfCwbNnvXemTWkZLKKRxEUJY/YqtDeBBgwY1SB6C7TRixIg7d+4AH7OGmMVMY2WO8fjx47lYarUHrqoKc0wM7+TGGfenn36aNGlSHdaCysEhocXFbnOwxkmMsUGDGwYwf5Jhw4aBzJBlRZcPRNxPkIYB1tTUTJw0yalwalXoDho06Cb4IC1Wng+7ZcuWYJMJ6XIu6+BgvaOj7hIjpnN0NJSD7TCGakT7c7vqEB21j1UDIV9TU/OLX/yiXpMXQ7S8JaI7adIjEBu2WCyg+/z009Vp06bCqIza0nY6PF3SYTG0GWvQHgzOhEaorPDkgwcPLioqqgdj4lLf0wxrJssyZK0YWs1BKhhjcMzO/818MB54u4x33nnbpDEuXDxjxoyePXs6RYIrWZqIVhqwIzIGTV0bF5bnsic/L69WCreTPisupQg0f4Y3n3qqOet977WxKwgIoZV/XAnqKIjla9euTZkyBZgVjkuKjo7++OOPefdVRyWz/j2YOK9LgKzsuLiBd2N0Ahj9+/eHHiD18nEdRjmIrvnz5+ttp5Zt7L755ps81xfKMUymYISQr48PQkjAeOnSpdAhEuD/7bO/RQ5n/DmaSbWwdKFzqXnXdyGi7TDu98AD2dnZdWTY1x2QgCxPUK2XLl3agvkYWNBoNO7cuZMjl56e/uijj+ovGzp0yHeQbMWY1WoFpbqqqqpv3752eNgDrBCbOkNcb4REzdUdOGDA3buNAIzYXr3U6j9XJzTUXXJIGLcdVq5ciVyHxj1YpdKMXahz5YwLJYEGSZJEMTIyMjk5GVzztnRazQF06tQpo9Ggjy1ygAsLi9TmGLKsyIoiK9zcgpfwjlz7o4EDmwBgPrSePXteu3aN97Fq6EGp0KkDNJJVq1bdPcb3dHWoCTedI3l9fkZGxoQJE/gEAXND3FctAnZ2xt+mTRv1EoxXs1m0A1sbRIMbZSbVgXGXLl2gIMpxP3ZSPuOQv62WO1tlfR7WPeNjfDfoKorSu3fvf/1rX2xsL0rZ5s3/WLNmTWlpKVSgwBFfGGNfX9/PP/981KhRsizXircgDPVnkkHSHysE2ctBQUF79uxp1y5QlhVb87da/Tdrnw0PbzE2b968q1evNlUrVFESiUK6du3yv//7Ra9evRRFaZzrEbhfkqT169evXr2aT5FHG7uJiYkFBQWMscuXLz/yyCNOXa8Q3A0LC+NMwOwz5Qio3JCex6MxnqZkREZGXrlyxXbMYsPLkXlqw2uvvebREQjA4NEpj2oCdhP0hnEleWCC+vTpA/qzXcGSemYFZfn5+dCuk2c54UZR82HcuXPnC2lpHGPmNrT6/RgwfuutTZ6IMcYYTJqnn34avMp8x3UnwD50yFC1cFtWGG8+RGxe3KtXr0KfSw+MwMAjhYWFnT17tjF8zG0nDeNt27ah2oHw+48uPMpLL73EGHvrrbdAVXZTZQCMR48eXVlZyTHWuXNVhSstLQ1aUXosxqGhoT/++CP42J0rWa6Y2yH99qOPdghaRPX+uzLgl+3bt+fm5rrJuE4xHjN6DMfYaQbMuXPnoM7fAz0DMF6TyXTs2DFu9Lu/Gavn4upKJT755BMfH+N9xhi+29/fP3VP6q5duwIDA+pmXFwfxg8//DCEIhydRIBxeno65OB5LMZBQUGAscViIQqBf1A2Aea4vk+iAh8Qfo36qcVsZox9+umn4KK/P8d/A4rR0dGbN2+ePXt2IxjX+X48dGhhQaHeuOTiDkzGrOzsYUOHNsgzgO+VcwBWfPv27Q8fPtwkpYuHDh0ymUy4GXooYXfQjYmOGTN27Nf//irrZlaTGHBg7/Z7oN+BAwe6dO1iZx8jhCihoiRWV1c/PX/+7j17YEI96hA1sLP9/f1TU1P79e8vW61OFr3DqRmMMUcQrVbZFBx08LODi55dZNV8O/duJAaDAc6Wb1rFR/OCdT516pTa+IHYe39gx0pOTtYfyepRGMMvfm3b+vn5tW3b1k9HbW3k5wf//PzatPGrdY2fn5/2V8HBwfd5gE0uPWC5BAQE/POf/9T3M+Oymnvqv/7665iYGIQQtGT3KLsRtQJqvmFwtOCo5Fr+XqIiDVtyYUHBU089xbnfo2bW0dnCedHPz0+4ry4aD5gdQTWvf/3rX0N80GK12KtdWjONffv29enTxzNhRrW7coaEhEyaNCkqKqo1g9fQLbl3797ff/89GIo2K5nYXNaQl7p27VrextJDYIYWM/C7r6/v8uXL165dC7WHXnRrbckGg2FdcjJgqduV1WJ8WZZB88rMzFyyZElAQIAK890dd3WXLMu51mg0Llmy5Pjx46tffFF/0OjPmrCzLTkxMfHkiZN8V2a6LCeeKQC+6+UrVkDfbaQV0t8DpMFrq1d6Q0NDV69enZWVdeyHY5C360W3nm3MaDD84Q9/UHvUUrXTN6PqwSg83Ykxlp+f//rrr8fHx+tvIklSk8fVHY+EFwQhKSnp/e3vy7JSVVX13HPPNbk92TqJc2FMTMzmzZt5+q1dAz1FUXgTLkLIkSNHli5d2rVbV7tbAdj8WKQG6caCIIii5FgeFxcXt2bNmvPnz8O3b9q0CTqztLzOG56gkfbv33/Hjh28eRbk7On1LzWBmTHGWFVV1ZEjR1avXp2YmMg3aTvIgRFdkasDLENDQydNnPjqq69CNAnovffe4yfYeiDjYs9nZTjgDiHUr1+/RYsWzZw5q0OHYIQQFHMKWBCwAE5BQgliSDLYRGhWVlZaWtqZM2cuXLiQkZGRnZ1dWlrqpiNQEITg4OCoqKjY2NhBgwbFxcXFxvYO105fKyku+eDDD7Zs2XLlyhWk9cn1wBSclqEF6GHu2LHjr371q9mzZ0M3E0CaUqoeW4cwQohQwhizY0RGWWFRYX5BQV5uTl5efumdO8UlJWazWbbKhBJRFIxGHz8/v/bt25tMpo4dO4aHh0dERAQHB9tJ9VOnTu3evTs1NfXWrVvoro8i9pK9aOUvExMTX3vtNd5OnjeChi6EvI+O2rtds68aTRkZGZs2bRo1aiRfNOJ9ss1aIQc77s2Kdky2j4/P4MGDR48ePXr06AEDBgRppwVz5gYlnB8TylkNxCljDDG1mSrXvfmfV1ZWXrp06ciRI19+9eWJ4yeqq6u5dwXKUlqWFdryHCMYY0V3IHp4eHj//v0TEhLi4uJ69uwZGRkJ2YDuk9lszsnN/Skj4/z5Cz/+eOr06dM3btywc8V4dLprawJY73OAHVo/7xjjsLCwqKioTp06RUVFRUREmEzBgYGB7QIDBVEgCiGU1NTUlJeXFxeX3L5dlJ+fn52dnZWVlZubazab7dyosMu2IFxbD8BOwQaz+G42e0EQEGO05WtPrdaXxk9A1Ts37JIl7PweepXKq9J6yUte8pKXvOQlL/18VEcveclLXtngJS95yUte8pKXvOTVv7zkhc07iV7yknepecm7eL3kXSVe8pKXvOQlL3nJS15Nwkte8pKXvHQ/6f8A4RPdzz4FXioAAAAASUVORK5CYII=" alt="Logo Ryntax" width="40" height="40" style="width:2.5rem;height:2.5rem;border-radius:50%;border:2.5px solid #111;background:#000;object-fit:cover"><span>Ryntax</span><span class="badge" style="margin:0">ALL TOOLS</span></a>
+    <span class="muted text-sm hidden sm:inline" id="tool-count"></span>
+    <div class="flex-1"></div>
+    <div id="auth-box" class="relative"></div>
+    <button id="theme-toggle" class="icon-btn" type="button" aria-label="Ganti tema terang/gelap" title="Ganti tema"></button>
+  </div>
+</header>
+
+<main class="flex-1 max-w-6xl w-full mx-auto px-4 py-6">
+
+  <!-- Daftar tools -->
+  <section id="view-list">
+    <div class="mb-6">
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Alat bantu harian, langsung pakai.</h1>
+      <p class="muted mt-2 max-w-xl">Semua berjalan di browser Anda. Tanpa daftar akun, tanpa data yang dikirim ke server.</p>
+    </div>
+
+    <div class="relative mb-4">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 muted" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="search" class="field" style="padding-left:2.4rem" type="search" placeholder="Cari tool, misalnya: password, diskon, huruf kapital" autocomplete="off" aria-label="Cari tool">
+    </div>
+
+    <div id="chips" class="flex gap-2 overflow-x-auto pb-2 mb-4" role="tablist" aria-label="Kategori"></div>
+
+    <div class="flex items-center gap-3 mb-4"><span class="badge-lg">SEMUA TOOLS</span><span id="grid-count" class="muted text-sm font-semibold"></span></div>
+    <div id="grid" class="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"></div>
+    <div id="empty" class="hidden surface rounded-2xl p-8 text-center">
+      <p class="font-semibold">Tidak ada tool yang cocok.</p>
+      <p class="muted text-sm mt-1">Coba kata kunci lain atau pilih kategori Semua.</p>
+    </div>
+  </section>
+
+  <!-- Halaman tool -->
+  <section id="view-tool" class="hidden">
+    <button id="back" type="button" class="btn mb-5 inline-flex items-center gap-2">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      Semua tool
+    </button>
+    <div class="flex items-start gap-3 mb-5">
+      <span id="tool-icon" class="tool-icon shrink-0"></span>
+      <div>
+        <h2 id="tool-title" class="text-2xl font-extrabold tracking-tight"></h2>
+        <p id="tool-desc" class="muted text-sm mt-0.5"></p>
+      </div>
+    </div>
+    <div id="tool-root" class="surface rounded-2xl p-4 sm:p-6"></div>
+  </section>
+
+</main>
+
+<footer class="max-w-6xl w-full mx-auto px-4 py-6 muted text-sm">All Tools · dibuat dengan HTML, Tailwind CSS, dan JavaScript.</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =====================================================================
+   BAGIAN 1 — UTILITAS BERSAMA
+   ===================================================================== */
+const Util = {
+  $(sel, root) { return (root || document).querySelector(sel); },
+  $$(sel, root) { return Array.from((root || document).querySelectorAll(sel)); },
+  fmt(n, max) {
+    if (!isFinite(n)) return '–';
+    return new Intl.NumberFormat('id-ID', { maximumFractionDigits: max === undefined ? 2 : max }).format(n);
+  },
+  toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(Util._tt);
+    Util._tt = setTimeout(() => t.classList.remove('show'), 1800);
+  },
+  async copy(text) {
+    if (!text) { Util.toast('Tidak ada teks untuk disalin'); return false; }
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (err) { Util.toast('Gagal menyalin'); document.body.removeChild(ta); return false; }
+      document.body.removeChild(ta);
+    }
+    Util.toast('Tersalin ke clipboard');
+    Util.flash();
+    return true;
+  },
+  icon(paths) {
+    return '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + paths + '</svg>';
+  }
+};
+
+/* =====================================================================
+   BAGIAN 2 — REGISTRI TOOL
+   Untuk menambah tool baru: panggil registerTool({...}) satu kali.
+   Setiap tool berisi:
+     id          : string unik (huruf kecil, tanpa spasi)
+     name        : nama yang tampil
+     category    : 'Text' | 'Generators' | 'Calculators' (atau kategori baru, otomatis muncul)
+     description : penjelasan singkat
+     keywords    : kata kunci tambahan untuk pencarian
+     icon        : isi SVG (path) ukuran 24x24
+     mount(root) : fungsi yang mengisi elemen root dengan antarmuka tool
+   ===================================================================== */
+const TOOLS = [];
+function registerTool(tool) {
+  if (TOOLS.some(t => t.id === tool.id)) { console.warn('Tool dengan id sudah ada: ' + tool.id); return; }
+  TOOLS.push(tool);
+}
+
+/* ---------- Tool 1: Word & Character Counter ---------- */
+registerTool({
+  id: 'word-counter',
+  name: 'Word & Character Counter',
+  category: 'Text',
+  description: 'Hitung kata, karakter, baris, dan estimasi waktu baca.',
+  keywords: 'hitung kata karakter baris waktu baca counter',
+  icon: '<path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/>',
+  mount(root) {
+    root.innerHTML = `
+      <label for="wc-text" class="block text-sm font-semibold mb-2">Tempel atau ketik teks Anda</label>
+      <textarea id="wc-text" class="field" rows="9" placeholder="Mulai mengetik di sini..."></textarea>
+      <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mt-4">
+        <div class="stat"><span class="muted text-sm">Kata</span><b id="wc-words" class="tabular">0</b></div>
+        <div class="stat"><span class="muted text-sm">Karakter (dengan spasi)</span><b id="wc-chars" class="tabular">0</b></div>
+        <div class="stat"><span class="muted text-sm">Karakter (tanpa spasi)</span><b id="wc-nospace" class="tabular">0</b></div>
+        <div class="stat"><span class="muted text-sm">Baris</span><b id="wc-lines" class="tabular">0</b></div>
+        <div class="stat"><span class="muted text-sm">Kalimat</span><b id="wc-sent" class="tabular">0</b></div>
+        <div class="stat"><span class="muted text-sm">Estimasi waktu baca</span><b id="wc-read" class="tabular">0 dtk</b></div>
+      </div>
+      <p class="muted text-xs mt-3">Estimasi waktu baca dihitung dengan kecepatan 200 kata per menit.</p>
+      <div class="mt-4"><button id="wc-clear" type="button" class="btn">Hapus teks</button></div>`;
+    const $ = s => Util.$(s, root);
+    const area = $('#wc-text');
+    function update() {
+      const text = area.value;
+      const words = (text.match(/\S+/g) || []).length;
+      const chars = text.length;
+      const nospace = text.replace(/\s/g, '').length;
+      const lines = text.length ? text.split(/\r\n|\r|\n/).length : 0;
+      const sentences = (text.match(/[^.!?]+[.!?]+(\s|$)|[^.!?]+$/g) || []).filter(s => /\S/.test(s)).length;
+      const seconds = Math.ceil((words / 200) * 60);
+      let read;
+      if (words === 0) read = '0 dtk';
+      else if (seconds < 60) read = seconds + ' dtk';
+      else { const m = Math.floor(seconds / 60), s = seconds % 60; read = m + ' mnt' + (s ? ' ' + s + ' dtk' : ''); }
+      $('#wc-words').textContent = Util.fmt(words, 0);
+      $('#wc-chars').textContent = Util.fmt(chars, 0);
+      $('#wc-nospace').textContent = Util.fmt(nospace, 0);
+      $('#wc-lines').textContent = Util.fmt(lines, 0);
+      $('#wc-sent').textContent = Util.fmt(sentences, 0);
+      $('#wc-read').textContent = read;
+    }
+    area.addEventListener('input', update);
+    $('#wc-clear').addEventListener('click', () => { area.value = ''; update(); area.focus(); });
+    update();
+  }
+});
+
+/* ---------- Tool 2: Password Generator ---------- */
+registerTool({
+  id: 'password-generator',
+  badge: 'DISEMATKAN',
+  name: 'Password Gen',
+  category: 'Generators',
+  description: 'Buat password acak yang kuat dengan opsi yang bisa diatur.',
+  keywords: 'sandi kata sandi acak random aman generator',
+  icon: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+  mount(root) {
+    root.innerHTML = `
+      <div class="flex gap-2">
+        <input id="pw-out" class="field tabular" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:1.05rem" type="text" readonly aria-label="Password hasil">
+        <button id="pw-copy" type="button" class="btn btn-primary">Salin</button>
+      </div>
+      <div class="mt-3" aria-live="polite">
+        <div class="h-2 rounded-full overflow-hidden" style="background:var(--line)"><div id="pw-bar" class="h-full" style="width:0;transition:width .2s"></div></div>
+        <p class="text-sm mt-1">Kekuatan: <b id="pw-strength">–</b></p>
+      </div>
+      <div class="mt-5">
+        <label for="pw-len" class="flex justify-between text-sm font-semibold mb-2"><span>Panjang password</span><span id="pw-len-val" class="tabular">16</span></label>
+        <input id="pw-len" type="range" min="4" max="64" value="16">
+      </div>
+      <div class="grid sm:grid-cols-2 gap-3 mt-4 text-sm">
+        <label class="stat flex items-center gap-3 cursor-pointer"><input id="pw-upper" type="checkbox" checked> Huruf besar (A–Z)</label>
+        <label class="stat flex items-center gap-3 cursor-pointer"><input id="pw-lower" type="checkbox" checked> Huruf kecil (a–z)</label>
+        <label class="stat flex items-center gap-3 cursor-pointer"><input id="pw-num" type="checkbox" checked> Angka (0–9)</label>
+        <label class="stat flex items-center gap-3 cursor-pointer"><input id="pw-sym" type="checkbox" checked> Simbol (!@#$%...)</label>
+      </div>
+      <p id="pw-msg" class="text-sm mt-3" style="color:#d93a3a" role="alert"></p>
+      <div class="mt-4"><button id="pw-gen" type="button" class="btn">Buat password baru</button></div>`;
+    const $ = s => Util.$(s, root);
+    const SETS = {
+      upper: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+      lower: 'abcdefghijklmnopqrstuvwxyz',
+      num: '0123456789',
+      sym: '!@#$%^&*()-_=+[]{};:,.<>?/~'
+    };
+    function randInt(max) {
+      // Pengambilan acak tanpa bias menggunakan crypto API
+      const limit = Math.floor(4294967296 / max) * max;
+      const buf = new Uint32Array(1);
+      do { crypto.getRandomValues(buf); } while (buf[0] >= limit);
+      return buf[0] % max;
+    }
+    function generate() {
+      const len = parseInt($('#pw-len').value, 10);
+      $('#pw-len-val').textContent = len;
+      const active = [];
+      if ($('#pw-upper').checked) active.push(SETS.upper);
+      if ($('#pw-lower').checked) active.push(SETS.lower);
+      if ($('#pw-num').checked) active.push(SETS.num);
+      if ($('#pw-sym').checked) active.push(SETS.sym);
+      if (!active.length) {
+        $('#pw-out').value = '';
+        $('#pw-msg').textContent = 'Pilih minimal satu jenis karakter.';
+        $('#pw-bar').style.width = '0';
+        $('#pw-strength').textContent = '–';
+        return;
+      }
+      $('#pw-msg').textContent = '';
+      const all = active.join('');
+      const chars = [];
+      // Pastikan setiap jenis yang dipilih muncul minimal satu kali
+      active.forEach(set => chars.push(set[randInt(set.length)]));
+      while (chars.length < len) chars.push(all[randInt(all.length)]);
+      // Acak urutan (Fisher–Yates)
+      for (let i = chars.length - 1; i > 0; i--) {
+        const j = randInt(i + 1);
+        const tmp = chars[i]; chars[i] = chars[j]; chars[j] = tmp;
+      }
+      const pw = chars.slice(0, len).join('');
+      $('#pw-out').value = pw;
+      const bits = Math.log2(all.length) * pw.length;
+      let label, color, pct;
+      if (bits < 40) { label = 'Lemah'; color = '#d93a3a'; pct = 25; }
+      else if (bits < 60) { label = 'Cukup'; color = '#e0952b'; pct = 50; }
+      else if (bits < 90) { label = 'Kuat'; color = '#3aa15c'; pct = 75; }
+      else { label = 'Sangat kuat'; color = '#1f8a4c'; pct = 100; }
+      $('#pw-bar').style.width = pct + '%';
+      $('#pw-bar').style.background = color;
+      $('#pw-strength').textContent = label + ' (±' + Math.round(bits) + ' bit)';
+    }
+    ['#pw-len', '#pw-upper', '#pw-lower', '#pw-num', '#pw-sym'].forEach(s => $(s).addEventListener('input', generate));
+    $('#pw-gen').addEventListener('click', generate);
+    $('#pw-copy').addEventListener('click', () => Util.copy($('#pw-out').value));
+    generate();
+  }
+});
+
+/* ---------- Tool 3: Case Converter ---------- */
+registerTool({
+  id: 'case-converter',
+  name: 'Case Converter',
+  category: 'Text',
+  description: 'Ubah teks ke UPPERCASE, lowercase, Title Case, atau Sentence case.',
+  keywords: 'huruf besar kecil kapital uppercase lowercase title sentence ubah',
+  icon: '<path d="M3 17 8 6l5 11"/><path d="M4.8 13h6.4"/><path d="M15 17v-6a2 2 0 0 1 4 0v6"/><path d="M15 14h4"/>',
+  mount(root) {
+    root.innerHTML = `
+      <label for="cc-in" class="block text-sm font-semibold mb-2">Teks asli</label>
+      <textarea id="cc-in" class="field" rows="6" placeholder="Tempel teks yang ingin diubah..."></textarea>
+      <div class="flex flex-wrap gap-2 mt-3" role="group" aria-label="Pilih format huruf">
+        <button type="button" class="btn" data-mode="upper">UPPERCASE</button>
+        <button type="button" class="btn" data-mode="lower">lowercase</button>
+        <button type="button" class="btn" data-mode="title">Title Case</button>
+        <button type="button" class="btn" data-mode="sentence">Sentence case</button>
+      </div>
+      <label for="cc-out" class="block text-sm font-semibold mt-5 mb-2">Hasil</label>
+      <textarea id="cc-out" class="field" rows="6" readonly placeholder="Hasil akan muncul di sini"></textarea>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button id="cc-copy" type="button" class="btn btn-primary">Salin hasil</button>
+        <button id="cc-clear" type="button" class="btn">Hapus semua</button>
+      </div>`;
+    const $ = s => Util.$(s, root);
+    const converters = {
+      upper: t => t.toUpperCase(),
+      lower: t => t.toLowerCase(),
+      title: t => t.toLowerCase().replace(/(^|[\s\-(\["'])(\S)/gu, (m, pre, ch) => pre + ch.toUpperCase()),
+      sentence: t => t.toLowerCase().replace(/(^\s*|[.!?]\s+|\n\s*)(\S)/gu, (m, pre, ch) => pre + ch.toUpperCase())
+    };
+    let mode = 'upper';
+    function run() {
+      $('#cc-out').value = converters[mode]($('#cc-in').value);
+      Util.$$('[data-mode]', root).forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    }
+    Util.$$('[data-mode]', root).forEach(b => b.addEventListener('click', () => { mode = b.dataset.mode; run(); }));
+    $('#cc-in').addEventListener('input', run);
+    $('#cc-copy').addEventListener('click', () => Util.copy($('#cc-out').value));
+    $('#cc-clear').addEventListener('click', () => { $('#cc-in').value = ''; run(); $('#cc-in').focus(); });
+    run();
+  }
+});
+
+/* ---------- Tool 4: Percentage / Discount Calculator ---------- */
+registerTool({
+  id: 'percentage-calculator',
+  name: 'Percentage & Discount Calculator',
+  category: 'Calculators',
+  description: 'Hitung persentase, perubahan persen, dan harga setelah diskon.',
+  keywords: 'persen persentase diskon harga potongan kalkulator hemat naik turun',
+  icon: '<path d="M19 5 5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/>',
+  mount(root) {
+    root.innerHTML = `
+      <div class="flex flex-wrap gap-2 mb-5" role="tablist" aria-label="Jenis perhitungan">
+        <button type="button" class="btn" data-calc="discount">Harga setelah diskon</button>
+        <button type="button" class="btn" data-calc="of">X% dari Y</button>
+        <button type="button" class="btn" data-calc="what">X adalah berapa % dari Y</button>
+        <button type="button" class="btn" data-calc="change">Perubahan persen</button>
+      </div>
+      <div id="pc-form" class="grid sm:grid-cols-2 gap-4"></div>
+      <div id="pc-result" class="stat mt-5" aria-live="polite"></div>`;
+    const $ = s => Util.$(s, root);
+    const defs = {
+      discount: {
+        fields: [['a', 'Harga asli', 'mis. 250000'], ['b', 'Diskon (%)', 'mis. 20']],
+        calc(a, b) {
+          const save = a * b / 100, final = a - save;
+          return { main: 'Harga akhir: ' + Util.fmt(final), sub: 'Anda hemat ' + Util.fmt(save) + ' (' + Util.fmt(b) + '% dari ' + Util.fmt(a) + ')' };
+        }
+      },
+      of: {
+        fields: [['a', 'Persen (X)', 'mis. 15'], ['b', 'Dari angka (Y)', 'mis. 800']],
+        calc(a, b) { return { main: Util.fmt(a) + '% dari ' + Util.fmt(b) + ' = ' + Util.fmt(a * b / 100), sub: '' }; }
+      },
+      what: {
+        fields: [['a', 'Angka (X)', 'mis. 45'], ['b', 'Dari total (Y)', 'mis. 300']],
+        calc(a, b) {
+          if (b === 0) return { error: 'Y tidak boleh nol.' };
+          return { main: Util.fmt(a) + ' adalah ' + Util.fmt(a / b * 100) + '% dari ' + Util.fmt(b), sub: '' };
+        }
+      },
+      change: {
+        fields: [['a', 'Nilai awal', 'mis. 120'], ['b', 'Nilai akhir', 'mis. 150']],
+        calc(a, b) {
+          if (a === 0) return { error: 'Nilai awal tidak boleh nol.' };
+          const pct = (b - a) / Math.abs(a) * 100;
+          return { main: (pct >= 0 ? 'Naik ' : 'Turun ') + Util.fmt(Math.abs(pct)) + '%', sub: 'Selisih ' + Util.fmt(b - a) + ' dari ' + Util.fmt(a) + ' ke ' + Util.fmt(b) };
+        }
+      }
+    };
+    let current = 'discount';
+    const values = {};
+    function render() {
+      const def = defs[current];
+      Util.$$('[data-calc]', root).forEach(b => b.classList.toggle('active', b.dataset.calc === current));
+      $('#pc-form').innerHTML = def.fields.map(f =>
+        '<div><label for="pc-' + f[0] + '" class="block text-sm font-semibold mb-2">' + f[1] + '</label>' +
+        '<input id="pc-' + f[0] + '" class="field tabular" type="number" inputmode="decimal" step="any" placeholder="' + f[2] + '" value="' + (values[current + f[0]] || '') + '"></div>'
+      ).join('');
+      Util.$$('input', $('#pc-form')).forEach(i => i.addEventListener('input', () => { values[current + i.id.slice(3)] = i.value; compute(); }));
+      compute();
+    }
+    function compute() {
+      const aRaw = $('#pc-a').value, bRaw = $('#pc-b').value;
+      const out = $('#pc-result');
+      if (aRaw === '' || bRaw === '') {
+        out.innerHTML = '<span class="muted text-sm">Isi kedua kolom untuk melihat hasil.</span>';
+        return;
+      }
+      const a = parseFloat(aRaw), b = parseFloat(bRaw);
+      if (isNaN(a) || isNaN(b)) { out.innerHTML = '<span style="color:#d93a3a">Masukkan angka yang valid.</span>'; return; }
+      const r = defs[current].calc(a, b);
+      if (r.error) { out.innerHTML = '<span style="color:#d93a3a">' + r.error + '</span>'; return; }
+      out.innerHTML = '<b class="tabular" style="font-size:1.5rem">' + r.main + '</b>' + (r.sub ? '<span class="muted text-sm">' + r.sub + '</span>' : '');
+    }
+    Util.$$('[data-calc]', root).forEach(b => b.addEventListener('click', () => { current = b.dataset.calc; render(); }));
+    render();
+  }
+});
+
+/* ---------- Tool 5: QR Code Generator ---------- */
+registerTool({
+  id: 'qr-generator',
+  badge: 'TERPOPULER',
+  name: 'QR Code',
+  category: 'Generators',
+  description: 'Ubah teks atau URL menjadi QR code, lalu unduh atau salin sebagai gambar.',
+  keywords: 'qr code kode barcode url link tautan scan unduh png',
+  icon: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h3M20 17v4"/>',
+  mount(root) {
+    root.innerHTML = `
+      <label for="qr-text" class="block text-sm font-semibold mb-2">Teks atau URL</label>
+      <textarea id="qr-text" class="field" rows="3" placeholder="https://contoh.com"></textarea>
+      <div class="grid sm:grid-cols-2 gap-4 mt-4">
+        <div>
+          <label for="qr-size" class="block text-sm font-semibold mb-2">Ukuran gambar unduhan</label>
+          <select id="qr-size" class="field">
+            <option value="256">256 × 256 px</option>
+            <option value="512" selected>512 × 512 px</option>
+            <option value="1024">1024 × 1024 px</option>
+          </select>
+        </div>
+        <div>
+          <label for="qr-ec" class="block text-sm font-semibold mb-2">Tingkat koreksi kesalahan</label>
+          <select id="qr-ec" class="field">
+            <option value="L">Rendah (L)</option>
+            <option value="M" selected>Sedang (M)</option>
+            <option value="Q">Tinggi (Q)</option>
+            <option value="H">Sangat tinggi (H)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mt-5 flex flex-col items-center gap-3">
+        <div class="rounded-xl p-3" style="background:#fff;border:1px solid var(--line)">
+          <canvas id="qr-canvas" width="256" height="256" style="width:100%;max-width:260px;height:auto;image-rendering:pixelated;display:none" aria-label="QR code hasil"></canvas>
+          <p id="qr-empty" class="text-sm text-center px-6 py-16" style="color:#5d6879">Ketik teks atau URL untuk membuat QR code.</p>
+        </div>
+        <p id="qr-msg" class="text-sm" style="color:#d93a3a" role="alert"></p>
+      </div>
+      <div class="flex flex-wrap gap-2 justify-center mt-2">
+        <button id="qr-download" type="button" class="btn btn-primary">Unduh PNG</button>
+        <button id="qr-copy" type="button" class="btn">Salin gambar</button>
+        <button id="qr-copytext" type="button" class="btn">Salin teks</button>
+      </div>`;
+    const $ = s => Util.$(s, root);
+    const canvas = $('#qr-canvas');
+    const buttons = ['#qr-download', '#qr-copy', '#qr-copytext'].map(s => $(s));
+    function setReady(ready) {
+      canvas.style.display = ready ? 'block' : 'none';
+      $('#qr-empty').style.display = ready ? 'none' : 'block';
+      buttons.forEach(b => { b.disabled = !ready; b.style.opacity = ready ? '1' : '.5'; b.style.cursor = ready ? 'pointer' : 'not-allowed'; });
+    }
+    function draw() {
+      const text = $('#qr-text').value;
+      $('#qr-msg').textContent = '';
+      if (!text.trim()) { setReady(false); return; }
+      if (typeof qrcode === 'undefined') {
+        setReady(false);
+        $('#qr-msg').textContent = 'Library QR code gagal dimuat. Periksa koneksi internet lalu muat ulang halaman.';
+        return;
+      }
+      try {
+        qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+        const qr = qrcode(0, $('#qr-ec').value);
+        qr.addData(text);
+        qr.make();
+        const n = qr.getModuleCount();
+        const quiet = 4;
+        const target = parseInt($('#qr-size').value, 10);
+        const cell = Math.max(1, Math.floor(target / (n + quiet * 2)));
+        const px = cell * (n + quiet * 2);
+        canvas.width = px; canvas.height = px;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, px, px);
+        ctx.fillStyle = '#000000';
+        for (let r = 0; r < n; r++) {
+          for (let c = 0; c < n; c++) {
+            if (qr.isDark(r, c)) ctx.fillRect((c + quiet) * cell, (r + quiet) * cell, cell, cell);
+          }
+        }
+        setReady(true);
+      } catch (e) {
+        setReady(false);
+        $('#qr-msg').textContent = 'Teks terlalu panjang untuk dijadikan QR code. Persingkat teks atau turunkan tingkat koreksi kesalahan.';
+      }
+    }
+    ['#qr-text', '#qr-size', '#qr-ec'].forEach(s => $(s).addEventListener('input', draw));
+    $('#qr-download').addEventListener('click', () => {
+      canvas.toBlob(blob => {
+        if (!blob) { Util.toast('Gagal membuat file'); return; }
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'qrcode.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }, 'image/png');
+    });
+    $('#qr-copy').addEventListener('click', () => {
+      if (!navigator.clipboard || !window.ClipboardItem) { Util.toast('Browser belum mendukung salin gambar. Gunakan Unduh PNG.'); return; }
+      canvas.toBlob(blob => {
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+          .then(() => Util.toast('Gambar QR tersalin'))
+          .catch(() => Util.toast('Gagal menyalin gambar. Gunakan Unduh PNG.'));
+      }, 'image/png');
+    });
+    $('#qr-copytext').addEventListener('click', () => Util.copy($('#qr-text').value));
+    draw();
+  }
+});
+
+/* ---------- Tool 6: JSON Formatter & Validator ---------- */
+registerTool({
+  id: 'json-formatter',
+  name: 'JSON Formatter & Validator',
+  category: 'Text',
+  description: 'Rapikan JSON dengan indentasi dan cek apakah formatnya valid.',
+  keywords: 'json format rapikan validasi validator minify indentasi kode parse',
+  icon: '<path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1"/><path d="M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/>',
+  mount(root) {
+    root.innerHTML = `
+      <label for="js-in" class="block text-sm font-semibold mb-2">JSON</label>
+      <textarea id="js-in" class="field" rows="12" spellcheck="false" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9rem" placeholder='{"nama":"Budi","umur":25,"hobi":["baca","coding"]}'></textarea>
+      <div id="js-status" class="stat mt-3 text-sm" role="status" aria-live="polite"><span class="muted">Tempel JSON untuk dicek.</span></div>
+      <div class="flex flex-wrap items-center gap-2 mt-4">
+        <label for="js-indent" class="text-sm font-semibold">Indentasi</label>
+        <select id="js-indent" class="field" style="width:auto">
+          <option value="2" selected>2 spasi</option>
+          <option value="4">4 spasi</option>
+          <option value="tab">Tab</option>
+        </select>
+        <button id="js-format" type="button" class="btn btn-primary">Rapikan</button>
+        <button id="js-minify" type="button" class="btn">Minify</button>
+        <button id="js-copy" type="button" class="btn">Salin</button>
+        <button id="js-clear" type="button" class="btn">Hapus</button>
+      </div>`;
+    const $ = s => Util.$(s, root);
+    function describe(src, e) {
+      let line = null, col = null, m;
+      if ((m = e.message.match(/line (\d+) column (\d+)/))) { line = +m[1]; col = +m[2]; }
+      else if ((m = e.message.match(/position (\d+)/))) {
+        const pos = parseInt(m[1], 10), before = src.slice(0, pos);
+        line = before.split('\n').length; col = pos - before.lastIndexOf('\n');
+      }
+      return 'JSON tidak valid: ' + e.message + (line ? ' (baris ' + line + ', kolom ' + col + ')' : '');
+    }
+    function parse() {
+      const src = $('#js-in').value;
+      const status = $('#js-status');
+      if (!src.trim()) { status.innerHTML = '<span class="muted">Tempel JSON untuk dicek.</span>'; return null; }
+      try {
+        const data = JSON.parse(src);
+        const kind = Array.isArray(data) ? 'array (' + data.length + ' item)' : (data !== null && typeof data === 'object') ? 'objek (' + Object.keys(data).length + ' kunci)' : typeof data;
+        status.innerHTML = '';
+        const ok = document.createElement('span');
+        ok.style.color = '#1f8a4c'; ok.style.fontWeight = '600';
+        ok.textContent = 'JSON valid · ' + kind;
+        status.appendChild(ok);
+        return { data: data };
+      } catch (e) {
+        status.innerHTML = '';
+        const bad = document.createElement('span');
+        bad.style.color = '#d93a3a';
+        bad.textContent = describe(src, e);
+        status.appendChild(bad);
+        return null;
+      }
+    }
+    function indentValue() { const v = $('#js-indent').value; return v === 'tab' ? '\t' : parseInt(v, 10); }
+    $('#js-in').addEventListener('input', parse);
+    $('#js-format').addEventListener('click', () => {
+      const r = parse();
+      if (r) $('#js-in').value = JSON.stringify(r.data, null, indentValue());
+    });
+    $('#js-minify').addEventListener('click', () => {
+      const r = parse();
+      if (r) $('#js-in').value = JSON.stringify(r.data);
+    });
+    $('#js-copy').addEventListener('click', () => Util.copy($('#js-in').value));
+    $('#js-clear').addEventListener('click', () => { $('#js-in').value = ''; parse(); $('#js-in').focus(); });
+  }
+});
+
+/* ---------- Tool 7: Lorem Ipsum Generator ---------- */
+registerTool({
+  id: 'lorem-ipsum',
+  name: 'Lorem Ipsum Generator',
+  category: 'Generators',
+  description: 'Buat paragraf teks dummy sesuai jumlah yang Anda pilih.',
+  keywords: 'lorem ipsum dummy teks placeholder paragraf contoh isi',
+  icon: '<path d="M4 6h16M4 10h16M4 14h10M4 18h13"/>',
+  mount(root) {
+    root.innerHTML = `
+      <div class="grid sm:grid-cols-2 gap-4 items-end">
+        <div>
+          <label for="li-count" class="block text-sm font-semibold mb-2">Jumlah paragraf (1–50)</label>
+          <input id="li-count" class="field tabular" type="number" min="1" max="50" value="3">
+        </div>
+        <label class="stat flex items-center gap-3 cursor-pointer text-sm"><input id="li-start" type="checkbox" checked> Awali dengan "Lorem ipsum dolor sit amet"</label>
+      </div>
+      <label for="li-out" class="block text-sm font-semibold mt-5 mb-2">Hasil</label>
+      <textarea id="li-out" class="field" rows="12" readonly></textarea>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <button id="li-gen" type="button" class="btn btn-primary">Buat ulang</button>
+        <button id="li-copy" type="button" class="btn">Salin</button>
+      </div>`;
+    const $ = s => Util.$(s, root);
+    const WORDS = ('lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure in reprehenderit voluptate velit esse cillum fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum').split(' ');
+    const rnd = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+    function sentence() {
+      const n = rnd(8, 16);
+      const words = [];
+      for (let i = 0; i < n; i++) words.push(WORDS[rnd(0, WORDS.length - 1)]);
+      if (n > 10) words[rnd(3, n - 4)] += ',';
+      const s = words.join(' ');
+      return s.charAt(0).toUpperCase() + s.slice(1) + '.';
+    }
+    function paragraph() {
+      const parts = [];
+      const n = rnd(4, 7);
+      for (let i = 0; i < n; i++) parts.push(sentence());
+      return parts.join(' ');
+    }
+    function generate() {
+      let count = parseInt($('#li-count').value, 10);
+      if (isNaN(count) || count < 1) count = 1;
+      if (count > 50) count = 50;
+      const paras = [];
+      for (let i = 0; i < count; i++) paras.push(paragraph());
+      if ($('#li-start').checked) {
+        paras[0] = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. ' + paras[0];
+      }
+      $('#li-out').value = paras.join('\n\n');
+    }
+    $('#li-count').addEventListener('input', generate);
+    $('#li-start').addEventListener('input', generate);
+    $('#li-gen').addEventListener('click', generate);
+    $('#li-copy').addEventListener('click', () => Util.copy($('#li-out').value));
+    generate();
+  }
+});
+
+/* ---------- Tool 8: BMI Calculator ---------- */
+registerTool({
+  id: 'bmi-calculator',
+  name: 'BMI Calculator',
+  category: 'Calculators',
+  description: 'Hitung indeks massa tubuh dari tinggi dan berat badan beserta kategorinya.',
+  keywords: 'bmi imt indeks massa tubuh berat badan tinggi badan ideal kesehatan',
+  icon: '<path d="M12 3v18"/><path d="M5 7h14"/><path d="M5 7l-3 7a3 3 0 0 0 6 0z"/><path d="M19 7l-3 7a3 3 0 0 0 6 0z"/>',
+  mount(root) {
+    root.innerHTML = `
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label for="bmi-h" class="block text-sm font-semibold mb-2">Tinggi badan (cm)</label>
+          <input id="bmi-h" class="field tabular" type="number" inputmode="decimal" step="any" placeholder="mis. 170">
+        </div>
+        <div>
+          <label for="bmi-w" class="block text-sm font-semibold mb-2">Berat badan (kg)</label>
+          <input id="bmi-w" class="field tabular" type="number" inputmode="decimal" step="any" placeholder="mis. 65">
+        </div>
+      </div>
+      <div id="bmi-result" class="stat mt-5" aria-live="polite"></div>
+      <div id="bmi-scale" class="mt-4 hidden">
+        <div class="relative h-3 rounded-full" style="background:linear-gradient(to right,#4b8bf5 0%,#4b8bf5 28.3%,#3aa15c 28.3%,#3aa15c 50%,#e0952b 50%,#e0952b 66.7%,#d93a3a 66.7%,#d93a3a 100%)">
+          <span id="bmi-marker" class="absolute top-1/2 w-4 h-4 rounded-full" style="background:var(--ink);border:2px solid var(--surface);transform:translate(-50%,-50%);left:0"></span>
+        </div>
+        <div class="flex justify-between muted text-xs mt-2 tabular"><span>10</span><span>18,5</span><span>25</span><span>30</span><span>40</span></div>
+      </div>
+      <p class="muted text-xs mt-4">Kategori mengikuti standar WHO untuk orang dewasa. BMI hanya perkiraan kasar dan bukan diagnosis medis; konsultasikan hasilnya dengan tenaga kesehatan.</p>`;
+    const $ = s => Util.$(s, root);
+    function category(b) {
+      if (b < 18.5) return { name: 'Kurus', color: '#4b8bf5' };
+      if (b < 25) return { name: 'Normal', color: '#3aa15c' };
+      if (b < 30) return { name: 'Berat badan berlebih', color: '#e0952b' };
+      return { name: 'Obesitas', color: '#d93a3a' };
+    }
+    function compute() {
+      const out = $('#bmi-result'), scale = $('#bmi-scale');
+      const hRaw = $('#bmi-h').value, wRaw = $('#bmi-w').value;
+      scale.classList.add('hidden');
+      if (hRaw === '' || wRaw === '') { out.innerHTML = '<span class="muted text-sm">Isi tinggi dan berat badan untuk melihat hasil.</span>'; return; }
+      const h = parseFloat(hRaw), w = parseFloat(wRaw);
+      if (isNaN(h) || isNaN(w) || h < 50 || h > 260 || w < 10 || w > 500) {
+        out.innerHTML = '<span style="color:#d93a3a">Masukkan tinggi 50–260 cm dan berat 10–500 kg.</span>';
+        return;
+      }
+      const m = h / 100;
+      const bmi = w / (m * m);
+      const cat = category(bmi);
+      const lo = 18.5 * m * m, hi = 24.9 * m * m;
+      out.innerHTML = '';
+      const big = document.createElement('b');
+      big.className = 'tabular'; big.style.fontSize = '1.8rem';
+      big.textContent = 'BMI ' + Util.fmt(bmi, 1);
+      const label = document.createElement('span');
+      label.style.color = cat.color; label.style.fontWeight = '700';
+      label.textContent = cat.name;
+      const range = document.createElement('span');
+      range.className = 'muted text-sm block mt-1';
+      range.textContent = 'Berat badan normal untuk tinggi ' + Util.fmt(h, 1) + ' cm: ' + Util.fmt(lo, 1) + ' – ' + Util.fmt(hi, 1) + ' kg';
+      out.appendChild(big); out.appendChild(label); out.appendChild(range);
+      const pct = Math.min(1, Math.max(0, (bmi - 10) / 30)) * 100;
+      $('#bmi-marker').style.left = pct + '%';
+      scale.classList.remove('hidden');
+    }
+    $('#bmi-h').addEventListener('input', compute);
+    $('#bmi-w').addEventListener('input', compute);
+    compute();
+  }
+});
+
+/* ===== Helper tambahan ===== */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const rowsHtml = o => '<dl class="grid gap-2">' + Object.entries(o).map(([k, v]) => '<div class="stat flex justify-between gap-3 flex-wrap"><dt class="muted text-sm">' + esc(k) + '</dt><dd class="font-bold break-all">' + esc(v === undefined || v === null || v === '' ? '-' : v) + '</dd></div>').join('') + '</dl><button type="button" class="btn mt-3" data-copy-rows>Salin hasil</button>';
+const ctl = (f, p) => { const id = p + f.id; return '<div' + (f.area ? ' class="sm:col-span-2"' : '') + '><label for="' + id + '" class="block text-sm font-semibold mb-2">' + f.label + '</label>' +
+  (f.opts ? '<select id="' + id + '" class="field">' + f.opts.map(o => { o = Array.isArray(o) ? o : [o, o]; return '<option value="' + o[0] + '">' + o[1] + '</option>'; }).join('') + '</select>'
+  : f.area ? '<textarea id="' + id + '" class="field" rows="4" placeholder="' + (f.ph || '') + '">' + (f.val || '') + '</textarea>'
+  : '<input id="' + id + '" class="field" ' + (f.attr || '') + ' placeholder="' + (f.ph || '') + '">') + '</div>'; };
+const fieldGrid = (fs, p) => '<div class="grid sm:grid-cols-2 gap-4">' + fs.map(f => ctl(f, p)).join('') + '</div>';
+function saveCanvas(c, name) { c.toBlob(b => { const u = URL.createObjectURL(b), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 1000); }, 'image/png'); }
+function wrapText(ctx, text, maxW) {
+  const lines = [];
+  text.split('\n').forEach(p => { let line = ''; p.split(' ').forEach(w => { const t = line ? line + ' ' + w : w; if (ctx.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t; }); lines.push(line); });
+  return lines;
+}
+function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.moveTo(x + r, y); ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r); ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath(); }
+
+/* ---------- Cek IP Address ---------- */
+registerTool({
+  id: 'ip-check', name: 'Cek IP Address', category: 'Info', badge: 'TERPOPULER',
+  description: 'IP publik dan lokasi dasar perangkat.', keywords: 'ip address lokasi isp publik jaringan',
+  icon: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  mount(root) {
+    root.innerHTML = '<div id="ip-out" aria-live="polite"></div><div class="flex gap-2 mt-4"><button id="ip-go" class="btn btn-primary" type="button">Cek ulang</button><button id="ip-copy" class="btn" type="button">Salin IP</button></div><p class="muted text-xs mt-3">Lokasi berdasarkan IP hanya perkiraan (kota/wilayah), bukan posisi GPS.</p>';
+    const $ = s => Util.$(s, root); let ip = '';
+    async function go() {
+      const out = $('#ip-out'); out.innerHTML = '<span class="muted">Memuat...</span>';
+      try {
+        const r = await fetch('https://ipapi.co/json/'); if (!r.ok) throw new Error('x');
+        const d = await r.json(); if (d.error) throw new Error('x');
+        ip = d.ip; out.innerHTML = rowsHtml({ 'IP publik': d.ip, 'Kota': d.city, 'Wilayah': d.region, 'Negara': d.country_name, 'Zona waktu': d.timezone, 'Penyedia (ISP)': d.org });
+      } catch (e) {
+        try {
+          const r = await fetch('https://api.ipify.org?format=json'); const d = await r.json();
+          ip = d.ip; out.innerHTML = rowsHtml({ 'IP publik': d.ip }) + '<p class="muted text-sm mt-2">Info lokasi sedang tidak tersedia.</p>';
+        } catch (e2) { ip = ''; out.innerHTML = '<span style="color:#d93a3a">Gagal mengambil IP. Periksa koneksi atau matikan pemblokir iklan, lalu coba lagi.</span>'; }
+      }
+    }
+    $('#ip-go').addEventListener('click', go);
+    $('#ip-copy').addEventListener('click', () => Util.copy(ip));
+    go();
+  }
+});
+
+/* ---------- Device Info ---------- */
+registerTool({
+  id: 'device-info', name: 'Device Info', category: 'Info',
+  description: 'Info perangkat, layar, browser, dan baterai.', keywords: 'perangkat device baterai user agent resolusi layar platform browser',
+  icon: '<rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/>',
+  mount(root) {
+    root.innerHTML = '<div id="di-out"></div>';
+    const n = navigator;
+    const base = { 'User agent': n.userAgent, 'Platform': (n.userAgentData && n.userAgentData.platform) || n.platform, 'Bahasa': n.language, 'Resolusi layar': screen.width + ' × ' + screen.height, 'Area tampilan': innerWidth + ' × ' + innerHeight, 'Pixel ratio': window.devicePixelRatio, 'Inti CPU': n.hardwareConcurrency, 'Memori (perkiraan)': n.deviceMemory ? n.deviceMemory + ' GB' : 'Tidak tersedia', 'Layar sentuh': ('ontouchstart' in window || n.maxTouchPoints > 0) ? 'Ya' : 'Tidak', 'Online': n.onLine ? 'Ya' : 'Tidak' };
+    const draw = extra => { Util.$('#di-out', root).innerHTML = rowsHtml(Object.assign({}, base, extra)); };
+    draw({ 'Baterai': 'Memeriksa...' });
+    if (n.getBattery) {
+      n.getBattery().then(b => {
+        const upd = () => draw({ 'Baterai': Math.round(b.level * 100) + '%', 'Status pengisian': b.charging ? 'Sedang mengisi' : 'Tidak mengisi' });
+        upd(); b.addEventListener('levelchange', upd); b.addEventListener('chargingchange', upd);
+      }).catch(() => draw({ 'Baterai': 'Tidak dapat dibaca' }));
+    } else draw({ 'Baterai': 'Tidak didukung browser ini' });
+  }
+});
+
+/* ---------- Baca & Cek NIK ---------- */
+registerTool({
+  id: 'nik-checker', name: 'Baca & Cek NIK', category: 'Info',
+  description: '16 digit · wilayah · tanggal lahir.', keywords: 'nik ktp 16 digit wilayah lahir jenis kelamin provinsi',
+  icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M14 10h4M14 14h4M6 16c1-2 5-2 6 0"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([{ id: 'v', label: 'Nomor NIK (16 digit)', attr: 'inputmode="numeric" maxlength="16" autocomplete="off"', ph: '3201010101010001', area: true }].map(f => Object.assign(f, { area: false })), 'nk-') + '<div id="nk-out" class="mt-4" aria-live="polite"></div><p class="muted text-xs mt-3">Pengecekan hanya membaca struktur angka di browser Anda. Ini bukan verifikasi ke Dukcapil dan tidak ada data yang dikirim.</p>';
+    const PROV = { 11: 'Aceh', 12: 'Sumatera Utara', 13: 'Sumatera Barat', 14: 'Riau', 15: 'Jambi', 16: 'Sumatera Selatan', 17: 'Bengkulu', 18: 'Lampung', 19: 'Kep. Bangka Belitung', 21: 'Kepulauan Riau', 31: 'DKI Jakarta', 32: 'Jawa Barat', 33: 'Jawa Tengah', 34: 'DI Yogyakarta', 35: 'Jawa Timur', 36: 'Banten', 51: 'Bali', 52: 'Nusa Tenggara Barat', 53: 'Nusa Tenggara Timur', 61: 'Kalimantan Barat', 62: 'Kalimantan Tengah', 63: 'Kalimantan Selatan', 64: 'Kalimantan Timur', 65: 'Kalimantan Utara', 71: 'Sulawesi Utara', 72: 'Sulawesi Tengah', 73: 'Sulawesi Selatan', 74: 'Sulawesi Tenggara', 75: 'Gorontalo', 76: 'Sulawesi Barat', 81: 'Maluku', 82: 'Maluku Utara', 91: 'Papua', 92: 'Papua Barat', 93: 'Papua Selatan', 94: 'Papua Tengah', 95: 'Papua Pegunungan', 96: 'Papua Barat Daya' };
+    const inp = Util.$('#nk-v', root), out = Util.$('#nk-out', root);
+    function check() {
+      inp.value = inp.value.replace(/\D/g, '');
+      const v = inp.value;
+      if (!v) { out.innerHTML = '<span class="muted text-sm">Masukkan 16 digit NIK.</span>'; return; }
+      if (v.length !== 16) { out.innerHTML = '<span style="color:#d93a3a">NIK harus 16 digit angka (' + v.length + '/16).</span>'; return; }
+      let d = +v.slice(6, 8); const m = +v.slice(8, 10), yy = +v.slice(10, 12);
+      const female = d > 40; if (female) d -= 40;
+      const y = (yy <= new Date().getFullYear() % 100 ? 2000 : 1900) + yy;
+      const dt = new Date(y, m - 1, d);
+      if (m < 1 || m > 12 || dt.getMonth() !== m - 1 || dt.getDate() !== d) { out.innerHTML = '<span style="color:#d93a3a">Tanggal lahir pada NIK tidak valid.</span>'; return; }
+      const now = new Date(); let age = now.getFullYear() - y; if (now < new Date(now.getFullYear(), m - 1, d)) age--;
+      out.innerHTML = '<p class="font-bold mb-2" style="color:#1f8a4c">Format NIK valid</p>' + rowsHtml({ 'Provinsi': PROV[v.slice(0, 2)] || 'Kode tidak dikenal (' + v.slice(0, 2) + ')', 'Kode kab/kota': v.slice(0, 4), 'Kode kecamatan': v.slice(0, 6), 'Tanggal lahir': dt.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }), 'Perkiraan usia': age + ' tahun', 'Jenis kelamin': female ? 'Perempuan (tanggal +40)' : 'Laki-laki', 'Nomor urut': v.slice(12) });
+    }
+    inp.addEventListener('input', check); check();
+  }
+});
+
+/* ---------- BMR & TDEE ---------- */
+registerTool({
+  id: 'bmr-tdee', name: 'BMR & TDEE', category: 'Calculators',
+  description: 'Kebutuhan kalori harian (Mifflin-St Jeor).', keywords: 'bmr tdee kalori mifflin diet energi aktivitas',
+  icon: '<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([
+      { id: 's', label: 'Jenis kelamin', opts: [['m', 'Laki-laki'], ['f', 'Perempuan']] },
+      { id: 'a', label: 'Usia (tahun)', attr: 'type="number" inputmode="decimal"', ph: '25' },
+      { id: 'h', label: 'Tinggi (cm)', attr: 'type="number" inputmode="decimal"', ph: '170' },
+      { id: 'w', label: 'Berat (kg)', attr: 'type="number" inputmode="decimal"', ph: '65' },
+      { id: 'act', label: 'Tingkat aktivitas', area: false, opts: [['1.2', 'Jarang olahraga (×1,2)'], ['1.375', 'Ringan, 1–3x/minggu (×1,375)'], ['1.55', 'Sedang, 3–5x/minggu (×1,55)'], ['1.725', 'Berat, 6–7x/minggu (×1,725)'], ['1.9', 'Sangat berat (×1,9)']] }
+    ], 'bm-') + '<div id="bm-out" class="mt-5" aria-live="polite"></div><p class="muted text-xs mt-3">Perkiraan umum, bukan pengganti saran dokter atau ahli gizi.</p>';
+    const $ = s => Util.$(s, root);
+    function calc() {
+      const a = +$('#bm-a').value, h = +$('#bm-h').value, w = +$('#bm-w').value;
+      if (!(a > 0 && h > 0 && w > 0)) { $('#bm-out').innerHTML = '<span class="muted text-sm">Isi usia, tinggi, dan berat badan.</span>'; return; }
+      const bmr = 10 * w + 6.25 * h - 5 * a + ($('#bm-s').value === 'm' ? 5 : -161), tdee = bmr * +$('#bm-act').value, f = x => Util.fmt(x, 0) + ' kkal/hari';
+      $('#bm-out').innerHTML = rowsHtml({ 'BMR (kalori istirahat)': f(bmr), 'TDEE (kebutuhan harian)': f(tdee), 'Untuk menurunkan berat (−500)': f(tdee - 500), 'Untuk menaikkan berat (+300)': f(tdee + 300) });
+    }
+    Util.$$('input,select', root).forEach(e => e.addEventListener('input', calc)); calc();
+  }
+});
+
+/* ---------- iPhone Quotly ---------- */
+registerTool({
+  id: 'iphone-quotly', name: 'iPhone Quotly', category: 'Creative', badge: 'TERPOPULER',
+  description: 'Fake chat · IQC. Kartu chat ala iPhone.', keywords: 'iqc quotly fake chat imessage iphone pesan kartu gambar',
+  icon: '<path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8 8 0 1 1 21 12z"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([
+      { id: 'name', label: 'Nama pengirim', attr: 'value="Budi"' },
+      { id: 'time', label: 'Waktu', attr: 'value="09:41"' },
+      { id: 'msg', label: 'Isi pesan', area: true, val: 'Halo! Ini contoh pesan ala iPhone.' },
+      { id: 'side', label: 'Posisi pesan', opts: [['left', 'Masuk (kiri)'], ['right', 'Keluar (kanan)']] },
+      { id: 'theme', label: 'Tema', opts: [['light', 'Terang'], ['dark', 'Gelap']] }
+    ], 'iq-') + '<div class="mt-5 flex justify-center"><canvas id="iq-c" style="width:100%;max-width:320px;height:auto;border:2.5px solid #111"></canvas></div><div class="mt-4 flex justify-center"><button id="iq-dl" class="btn btn-primary" type="button">Unduh PNG</button></div>';
+    const $ = s => Util.$(s, root);
+    function draw() {
+      const c = $('#iq-c'), ctx = c.getContext('2d'), W = 640, dark = $('#iq-theme').value === 'dark', right = $('#iq-side').value === 'right';
+      const name = $('#iq-name').value.trim() || 'Nama', msg = $('#iq-msg').value || ' ', time = $('#iq-time').value;
+      const F = '-apple-system,"SF Pro Text",Helvetica,Arial,sans-serif';
+      ctx.font = '28px ' + F;
+      const lines = wrapText(ctx, msg, W * 0.7 - 48);
+      const bw = Math.max.apply(null, lines.map(l => ctx.measureText(l).width)) + 48, bh = lines.length * 38 + 30;
+      c.width = W; c.height = 150 + bh + 80;
+      ctx.fillStyle = dark ? '#000' : '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = dark ? '#1c1c1e' : '#f6f6f6'; ctx.fillRect(0, 0, W, 130);
+      ctx.fillStyle = '#8e8e93'; ctx.beginPath(); ctx.arc(W / 2, 46, 30, 0, 7); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 28px ' + F; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name.charAt(0).toUpperCase(), W / 2, 47);
+      ctx.fillStyle = dark ? '#fff' : '#000'; ctx.font = '20px ' + F; ctx.fillText(name, W / 2, 100);
+      const x = right ? W - bw - 28 : 28, y = 160;
+      ctx.fillStyle = right ? '#0a84ff' : (dark ? '#2c2c2e' : '#e9e9eb'); roundRect(ctx, x, y, bw, bh, 28); ctx.fill();
+      ctx.fillStyle = right ? '#fff' : (dark ? '#fff' : '#000'); ctx.font = '28px ' + F; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+      lines.forEach((l, i) => ctx.fillText(l, x + 24, y + 15 + i * 38));
+      ctx.fillStyle = '#8e8e93'; ctx.font = '18px ' + F; ctx.textAlign = right ? 'right' : 'left';
+      ctx.fillText(time, right ? x + bw : x, y + bh + 12);
+    }
+    Util.$$('input,textarea,select', root).forEach(e => e.addEventListener('input', draw));
+    $('#iq-dl').addEventListener('click', () => saveCanvas($('#iq-c'), 'iphone-quotly.png'));
+    draw();
+  }
+});
+
+/* ---------- Brat Generator ---------- */
+registerTool({
+  id: 'brat-generator', name: 'Brat Generator', category: 'Creative',
+  description: 'Teks · style · blur. Unduh sebagai PNG.', keywords: 'brat teks gambar hijau blur motion generator cover',
+  icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 9h8M8 13h5"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([
+      { id: 'text', label: 'Teks', area: true, val: 'brat summer' },
+      { id: 'bg', label: 'Latar', opts: [['#8ACE00', 'Hijau brat'], ['#ffffff', 'Putih'], ['custom', 'Kustom']] },
+      { id: 'cbg', label: 'Warna kustom', attr: 'type="color" value="#ff88cc" style="height:2.8rem;padding:.2rem"' },
+      { id: 'blur', label: 'Blur lembut (0–8)', attr: 'type="range" min="0" max="8" step="1" value="2"' },
+      { id: 'motion', label: 'Efek motion', opts: [['0', 'Tanpa motion'], ['1', 'Motion blur']] }
+    ], 'br-') + '<div class="mt-5 flex justify-center"><canvas id="br-c" style="width:100%;max-width:340px;height:auto;border:2.5px solid #111"></canvas></div><div class="mt-4 flex justify-center"><button id="br-dl" class="btn btn-primary" type="button">Unduh PNG</button></div><p class="muted text-xs mt-3 text-center">Efek blur tidak tampil di browser yang belum mendukung filter canvas (misalnya Safari lama).</p>';
+    const $ = s => Util.$(s, root);
+    function draw() {
+      const S = 800, c = $('#br-c'), x = c.getContext('2d'); c.width = c.height = S;
+      const bg = $('#br-bg').value; x.fillStyle = bg === 'custom' ? $('#br-cbg').value : bg; x.fillRect(0, 0, S, S);
+      const t = ($('#br-text').value || 'brat').toLowerCase(); let fs = 260, L = [t];
+      for (; fs > 24; fs -= 8) { x.font = 'bold ' + fs + 'px "Arial Narrow",Arial,sans-serif'; L = wrapText(x, t, S - 100); if (L.length * fs * 1.05 <= S - 100) break; }
+      x.fillStyle = '#000'; x.textBaseline = 'top'; x.textAlign = 'left';
+      const paint = (dx, al) => { x.globalAlpha = al; L.forEach((l, i) => x.fillText(l, 50 + dx, 50 + i * fs * 1.05)); };
+      if (x.filter !== undefined) x.filter = 'blur(' + $('#br-blur').value + 'px)';
+      if ($('#br-motion').value === '1') { paint(-16, 0.2); paint(-8, 0.35); }
+      paint(0, 1); x.filter = 'none'; x.globalAlpha = 1;
+    }
+    Util.$$('input,textarea,select', root).forEach(e => e.addEventListener('input', draw));
+    $('#br-dl').addEventListener('click', () => saveCanvas($('#br-c'), 'brat.png'));
+    draw();
+  }
+});
+
+/* ---------- Pabrik tool generator berbasis template ---------- */
+function genTool(c) {
+  registerTool({
+    id: c.id, name: c.name, category: c.category || 'Generators', badge: c.badge, description: c.description, keywords: c.keywords, icon: c.icon,
+    mount(root) {
+      root.innerHTML = fieldGrid(c.fields, 'g-') + '<label for="g-out" class="block text-sm font-semibold mt-5 mb-2">Hasil</label><textarea id="g-out" class="field" rows="13" readonly></textarea><div class="flex flex-wrap gap-2 mt-3"><button id="g-gen" class="btn btn-primary" type="button">Buat / variasi baru</button><button id="g-copy" class="btn" type="button">Salin</button><button id="g-dl" class="btn" type="button">Unduh .txt</button></div>';
+      const $ = s => Util.$(s, root);
+      const run = () => { const v = {}; c.fields.forEach(f => { v[f.id] = $('#g-' + f.id).value.trim(); }); $('#g-out').value = c.build(v); };
+      Util.$$('input,textarea,select', root).forEach(e => { if (e.id !== 'g-out') e.addEventListener('input', run); });
+      $('#g-gen').addEventListener('click', run);
+      $('#g-copy').addEventListener('click', () => Util.copy($('#g-out').value));
+      $('#g-dl').addEventListener('click', () => { const u = URL.createObjectURL(new Blob([$('#g-out').value], { type: 'text/plain' })), a = document.createElement('a'); a.href = u; a.download = c.id + '.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 1000); });
+      run();
+    }
+  });
+}
+
+genTool({
+  id: 'email-generator', name: 'Email Generator', description: 'Draf email formal siap kirim.', keywords: 'email surat lamaran izin follow up komplain draf',
+  icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  fields: [
+    { id: 'type', label: 'Jenis email', opts: ['Lamaran kerja', 'Izin tidak masuk', 'Permintaan pertemuan', 'Tindak lanjut (follow-up)', 'Keluhan / komplain'] },
+    { id: 'to', label: 'Nama penerima', ph: 'Bapak/Ibu Rina' },
+    { id: 'me', label: 'Nama Anda', ph: 'Budi Santoso' },
+    { id: 'note', label: 'Detail tambahan (opsional)', area: true, ph: 'Tanggal, posisi, atau alasan...' }
+  ],
+  build(v) {
+    const T = {
+      'Lamaran kerja': ['Lamaran Pekerjaan – ' + (v.me || '[Nama Anda]'), 'Saya tertarik bergabung dengan perusahaan Bapak/Ibu. Dengan pengalaman dan motivasi yang saya miliki, saya yakin dapat memberi kontribusi nyata. CV saya terlampir untuk dipertimbangkan.'],
+      'Izin tidak masuk': ['Pemberitahuan Izin Tidak Masuk', 'Dengan ini saya memberitahukan bahwa saya tidak dapat hadir bekerja pada waktu yang disebutkan di bawah ini. Pekerjaan yang mendesak akan saya koordinasikan dengan rekan tim.'],
+      'Permintaan pertemuan': ['Permohonan Jadwal Pertemuan', 'Saya ingin meminta waktu untuk berdiskusi singkat. Mohon informasikan jadwal yang sesuai, dan saya akan menyesuaikan.'],
+      'Tindak lanjut (follow-up)': ['Tindak Lanjut Pesan Sebelumnya', 'Saya menulis untuk menindaklanjuti pesan saya sebelumnya. Mohon kabar terbaru agar kami dapat melanjutkan ke langkah berikutnya.'],
+      'Keluhan / komplain': ['Penyampaian Keluhan', 'Saya ingin menyampaikan keluhan atas kendala yang saya alami. Mohon bantuan untuk meninjau dan menyelesaikannya secepat mungkin.']
+    }[v.type];
+    return 'Subjek: ' + T[0] + '\n\n' + pick(['Yth. ', 'Kepada Yth. ']) + (v.to || 'Bapak/Ibu') + ',\n\n' + pick(['Dengan hormat,', 'Selamat pagi/siang,']) + '\n\n' + T[1] + (v.note ? '\n\n' + v.note : '') + '\n\nTerima kasih atas waktu dan perhatian Bapak/Ibu.\n\nHormat saya,\n' + (v.me || '[Nama Anda]');
+  }
+});
+
+genTool({
+  id: 'thesis-topic', name: 'Thesis / Essay Topic Generator', description: 'Ide judul skripsi, tesis, atau esai.', keywords: 'skripsi tesis esai topik judul ide penelitian tugas akhir',
+  icon: '<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2 9 2 12 0v-5"/>',
+  fields: [
+    { id: 'b', label: 'Bidang / jurusan', ph: 'Manajemen, Pendidikan, Informatika...' },
+    { id: 'k', label: 'Kata kunci / minat', ph: 'media sosial, motivasi belajar...' },
+    { id: 'lv', label: 'Jenjang', opts: ['SMA', 'S1', 'S2'] }
+  ],
+  build(v) {
+    const k = v.k || 'topik pilihan', b = v.b || 'bidang terkait';
+    const P = ['Pengaruh ' + k + ' terhadap kinerja di bidang ' + b, 'Analisis ' + k + ' dalam konteks ' + b + ' di era digital', 'Studi kasus penerapan ' + k + ' pada ' + b, 'Hubungan antara ' + k + ' dan keberhasilan di bidang ' + b, 'Strategi pengembangan ' + k + ' untuk meningkatkan kualitas ' + b, 'Persepsi masyarakat terhadap ' + k + ' dalam ' + b, 'Evaluasi efektivitas ' + k + ' di ' + b, 'Tantangan dan peluang ' + k + ' pada ' + b + ' di Indonesia'];
+    const pre = { SMA: 'Esai', S1: 'Skripsi', S2: 'Tesis' }[v.lv];
+    return P.sort(() => Math.random() - 0.5).slice(0, 6).map((p, i) => (i + 1) + '. ' + p + ' (' + pre + ')').join('\n\n');
+  }
+});
+
+genTool({
+  id: 'research-question', name: 'Research Question Generator', description: 'Rumusan masalah dan pertanyaan penelitian.', keywords: 'pertanyaan penelitian rumusan masalah hipotesis kuantitatif kualitatif',
+  icon: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5M9.5 9a1.7 1.7 0 1 1 2.4 1.6c-.6.3-.9.7-.9 1.4"/>',
+  fields: [
+    { id: 't', label: 'Topik penelitian', ph: 'penggunaan e-wallet pada mahasiswa' },
+    { id: 'ap', label: 'Pendekatan', opts: ['Kuantitatif', 'Kualitatif', 'Campuran'] }
+  ],
+  build(v) {
+    const t = v.t || 'topik penelitian';
+    const Q = {
+      'Kuantitatif': ['Seberapa besar pengaruh ' + t + ' terhadap variabel terikat yang diteliti?', 'Apakah terdapat hubungan yang signifikan antara ' + t + ' dan faktor demografis responden?', 'Faktor apa saja yang paling memengaruhi ' + t + '?', 'Bagaimana perbedaan ' + t + ' antar kelompok responden?'],
+      'Kualitatif': ['Bagaimana pengalaman partisipan terkait ' + t + '?', 'Apa makna ' + t + ' bagi para pelaku di lapangan?', 'Bagaimana proses dan kendala yang dihadapi dalam ' + t + '?', 'Mengapa ' + t + ' berkembang seperti yang terjadi saat ini?'],
+      'Campuran': ['Seberapa luas ' + t + ' terjadi, dan bagaimana partisipan menjelaskannya?', 'Apakah temuan angka tentang ' + t + ' selaras dengan pengalaman partisipan?', 'Faktor apa yang berpengaruh pada ' + t + ' dan bagaimana mekanismenya?']
+    }[v.ap];
+    return Q.map((q, i) => 'RQ' + (i + 1) + ': ' + q).join('\n\n') + '\n\nTips: pilih 1–3 pertanyaan yang paling bisa dijawab dengan data dan waktu yang Anda punya.';
+  }
+});
+
+genTool({
+  id: 'cv-generator', name: 'CV / Resume Generator', badge: 'PREMIUM', description: 'Susun CV teks yang rapi dalam hitungan detik.', keywords: 'cv resume daftar riwayat hidup lamaran kerja curriculum vitae',
+  icon: '<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/>',
+  fields: [
+    { id: 'n', label: 'Nama lengkap', ph: 'Budi Santoso' }, { id: 'r', label: 'Posisi yang dituju', ph: 'Staf Pemasaran' },
+    { id: 'e', label: 'Email', ph: 'budi@email.com' }, { id: 'p', label: 'Telepon', ph: '0812xxxxxxx' },
+    { id: 'sm', label: 'Ringkasan profil', area: true, ph: 'Lulusan manajemen dengan 2 tahun pengalaman...' },
+    { id: 'ex', label: 'Pengalaman kerja (satu per baris)', area: true, ph: '2022–2024 | Staf Admin | PT Maju Jaya' },
+    { id: 'ed', label: 'Pendidikan (satu per baris)', area: true, ph: '2018–2022 | S1 Manajemen | Universitas X' },
+    { id: 'sk', label: 'Keahlian (pisahkan dengan koma)', ph: 'Excel, Komunikasi, Desain' }
+  ],
+  build(v) {
+    const sec = (h, t) => t ? '\n' + h + '\n' + t.split('\n').map(l => '- ' + l.trim()).join('\n') + '\n' : '';
+    return (v.n || 'NAMA LENGKAP').toUpperCase() + '\n' + (v.r || '') + '\n' + [v.e, v.p].filter(Boolean).join(' | ') + '\n' + (v.sm ? '\nRINGKASAN\n' + v.sm + '\n' : '') + sec('PENGALAMAN', v.ex) + sec('PENDIDIKAN', v.ed) + (v.sk ? '\nKEAHLIAN\n' + v.sk.split(',').map(s => s.trim()).filter(Boolean).join(' • ') + '\n' : '');
+  }
+});
+
+/* ---------- Ryntax AI ---------- */
+registerTool({
+  id: 'ryntax-ai', name: 'Ryntax AI', category: 'AI', badge: 'PREMIUM',
+  description: 'Chat dan template siap pakai. Mode demo atau hubungkan API.', keywords: 'ai chat asisten gpt caption ringkas ide konten ryntax',
+  icon: '<rect x="4" y="6" width="16" height="12" rx="3"/><path d="M12 6V3M9 12h.01M15 12h.01M9 16h6"/>',
+  mount(root) {
+    const TPL = [['Caption', 'Buatkan 3 caption singkat untuk: '], ['Ringkas', 'Ringkas teks berikut: '], ['Ide konten', 'Beri 5 ide konten tentang: '], ['Perbaiki kalimat', 'Perbaiki tata bahasa: '], ['Terjemahkan', 'Terjemahkan ke bahasa Inggris: ']];
+    root.innerHTML = '<div class="grid sm:grid-cols-4 gap-3">' + ctl({ id: 'mode', label: 'Mode', opts: [['demo', 'Demo lokal'], ['api', 'Hubungkan API']] }, 'ai-') +
+      '<div class="sm:col-span-3 api-box hidden"><div class="grid sm:grid-cols-3 gap-3">' + ctl({ id: 'url', label: 'Endpoint (kompatibel OpenAI)', attr: 'value="https://api.openai.com/v1/chat/completions"' }, 'ai-') + ctl({ id: 'key', label: 'API key', attr: 'type="password" autocomplete="off"' }, 'ai-') + ctl({ id: 'model', label: 'Model', attr: 'value="gpt-4o-mini"' }, 'ai-') + '</div><p class="text-xs muted mt-2">Kunci hanya disimpan di memori halaman ini. Untuk situs publik, sebaiknya arahkan endpoint ke backend/proxy milik Anda agar kunci tidak terlihat pengunjung.</p></div></div>' +
+      '<div class="flex flex-wrap gap-2 mt-4" id="ai-tpl">' + TPL.map((t, i) => '<button type="button" class="chip" data-i="' + i + '">' + t[0] + '</button>').join('') + '</div>' +
+      '<div id="ai-log" class="stat mt-4 grid gap-2 content-start" style="min-height:13rem;max-height:22rem;overflow:auto" aria-live="polite"></div>' +
+      '<textarea id="ai-in" class="field mt-3" rows="3" placeholder="Tulis pesan atau pilih template di atas..."></textarea><div class="flex gap-2 mt-3"><button id="ai-send" class="btn btn-primary" type="button">Kirim</button><button id="ai-clear" class="btn" type="button">Hapus chat</button></div>';
+    const $ = s => Util.$(s, root); const hist = []; let tpl = -1;
+    const add = (who, text) => { const d = document.createElement('div'); d.className = 'stat'; d.style.background = who === 'user' ? 'var(--accent-soft)' : 'var(--surface)'; const b = document.createElement('b'); b.className = 'text-xs block'; b.textContent = who === 'user' ? 'Anda' : 'Ryntax AI'; const p = document.createElement('div'); p.style.whiteSpace = 'pre-wrap'; p.textContent = text; d.appendChild(b); d.appendChild(p); $('#ai-log').appendChild(d); $('#ai-log').scrollTop = 1e6; };
+    function demo(text) {
+      const body = tpl >= 0 && text.startsWith(TPL[tpl][1]) ? text.slice(TPL[tpl][1].length).trim() : text.trim();
+      if (!body) return 'Tulis isi pesan setelah template.';
+      if (tpl === 0) return ['✨ ' + body + ' — mulai dari sini.', 'Cerita tentang ' + body + ', versi paling jujur.', body + ' hari ini, kenapa tidak?'].join('\n');
+      if (tpl === 1) return (body.match(/[^.!?]+[.!?]*/g) || [body]).slice(0, 2).join(' ').trim();
+      if (tpl === 2) return ['1. Tips singkat seputar ' + body, '2. Kesalahan umum tentang ' + body, '3. Perbandingan sebelum dan sesudah ' + body, '4. Tanya jawab dengan audiens tentang ' + body, '5. Cerita pengalaman pribadi dengan ' + body].join('\n');
+      if (tpl === 3) return body.replace(/\s+/g, ' ').replace(/(^|[.!?]\s+)([a-z])/g, (m, a, b) => a + b.toUpperCase()).replace(/([^.!?])$/, '$1.');
+      if (tpl === 4) return 'Mode demo tidak bisa menerjemahkan. Pilih "Hubungkan API" untuk hasil nyata.';
+      return 'Mode demo: pilih salah satu template di atas agar saya bisa merespons. Untuk jawaban bebas, pilih "Hubungkan API".';
+    }
+    async function send() {
+      const text = $('#ai-in').value.trim(); if (!text) return;
+      add('user', text); $('#ai-in').value = ''; hist.push({ role: 'user', content: text });
+      let reply;
+      if ($('#ai-mode').value === 'api') {
+        try {
+          const r = await fetch($('#ai-url').value.trim(), { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + $('#ai-key').value.trim() }, body: JSON.stringify({ model: $('#ai-model').value.trim(), messages: hist }) });
+          const d = await r.json(); reply = d.choices[0].message.content;
+        } catch (e) { add('ai', 'Gagal menghubungi API. Periksa endpoint, API key, dan izin CORS. Beralih ke jawaban demo.'); reply = demo(text); }
+      } else reply = demo(text);
+      hist.push({ role: 'assistant', content: reply }); add('ai', reply);
+    }
+    $('#ai-mode').addEventListener('input', () => Util.$('.api-box', root).classList.toggle('hidden', $('#ai-mode').value !== 'api'));
+    Util.$$('#ai-tpl .chip', root).forEach(b => b.addEventListener('click', () => { tpl = +b.dataset.i; $('#ai-in').value = TPL[tpl][1]; $('#ai-in').focus(); }));
+    $('#ai-send').addEventListener('click', send);
+    $('#ai-in').addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) send(); });
+    $('#ai-clear').addEventListener('click', () => { hist.length = 0; $('#ai-log').innerHTML = ''; });
+    add('ai', 'Halo! Pilih template atau tulis pesan. Kirim dengan Ctrl+Enter.');
+  }
+});
+
+/* ---------- Pabrik tool layanan (endpoint eksternal) ----------
+   Isi URL backend milik Anda pada ENDPOINTS. Kontrak yang diharapkan:
+   POST {endpoint}  body JSON berisi nilai kolom  →  balasan {"status":"ok","title":"...","download_url":"https://..."} */
+const ENDPOINTS = { tiktok: '', instagram: '', youtube: '', nokos: '', tts: '', foto: '/.netlify/functions/upload', file: '/.netlify/functions/upload', proxy: '/.netlify/functions/proxy?url=', rembg: '/.netlify/functions/rembg', resep: '', clips: '', deploy: '/.netlify/functions/deploy', preset: '', bilibili: '', pinterest: '', npsn: '', drama: '', wacheck: '' };
+function serviceTool(c) {
+  registerTool({
+    id: c.id, name: c.name, category: 'Downloader', badge: c.badge, description: c.description, keywords: c.keywords, icon: c.icon,
+    mount(root) {
+      root.innerHTML = fieldGrid(c.fields, 'sv-') + '<div class="mt-4"><button id="sv-go" class="btn btn-primary" type="button">' + c.action + '</button></div><p id="sv-status" class="text-sm mt-3 font-semibold" aria-live="polite"></p><h3 class="font-extrabold mt-5 mb-2">Riwayat</h3><ul id="sv-hist" class="grid gap-2"></ul><details class="mt-4 text-sm"><summary class="font-semibold cursor-pointer">Cara menghubungkan endpoint</summary><pre class="stat mt-2 text-xs" style="white-space:pre-wrap">Isi ENDPOINTS.' + c.key + ' di kode dengan URL backend Anda.\nRequest : POST JSON berisi nilai kolom di atas\nBalasan : {"status":"ok","title":"...","download_url":"https://..."}\nBackend perlu mengizinkan CORS dari domain situs ini.\nGunakan hanya untuk konten milik Anda atau yang diizinkan pemiliknya.</pre></details>';
+      const $ = s => Util.$(s, root), KEY = 'alltools-hist-' + c.id; let hist = [];
+      try { hist = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { hist = []; }
+      const save = () => { try { localStorage.setItem(KEY, JSON.stringify(hist.slice(0, 15))); } catch (e) { /* abaikan */ } };
+      function render() {
+        $('#sv-hist').innerHTML = hist.length ? hist.slice(0, 15).map(h => '<li class="stat text-sm"><b class="block break-all">' + esc(h.label) + '</b><span class="muted">' + esc(h.time) + ' · ' + esc(h.status) + '</span>' + (h.link ? ' <a class="underline font-bold" href="' + esc(h.link) + '" target="_blank" rel="noopener noreferrer">Buka hasil</a>' : '') + '</li>').join('') : '<li class="muted text-sm">Belum ada riwayat.</li>';
+      }
+      function log(label, status, link) { hist.unshift({ label: label, status: status, link: link || '', time: new Date().toLocaleString('id-ID') }); save(); render(); }
+      $('#sv-go').addEventListener('click', async () => {
+        const v = {}; c.fields.forEach(f => { v[f.id] = $('#sv-' + f.id).value.trim(); });
+        const err = c.validate ? c.validate(v) : ''; const st = $('#sv-status');
+        if (err) { st.style.color = '#d93a3a'; st.textContent = err; return; }
+        const label = c.label(v), ep = ENDPOINTS[c.key];
+        if (!ep) { st.style.color = '#b86b00'; st.textContent = 'Endpoint belum diatur (mode placeholder). Isi ENDPOINTS.' + c.key + ' di kode.'; log(label, 'Menunggu endpoint'); return; }
+        st.style.color = 'inherit'; st.textContent = 'Memproses...';
+        try {
+          const r = await fetch(ep, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(v) }); const d = await r.json();
+          if (!r.ok || d.status === 'error') throw new Error(d.message || 'Gagal');
+          st.style.color = '#1f8a4c'; st.textContent = 'Selesai' + (d.title ? ': ' + d.title : ''); log(label, 'Selesai', /^https?:\/\//.test(d.download_url || '') ? d.download_url : '');
+        } catch (e) { st.style.color = '#d93a3a'; st.textContent = 'Gagal memproses. Periksa endpoint dan CORS.'; log(label, 'Gagal'); }
+      });
+      render();
+    }
+  });
+}
+const urlRule = (re, name) => v => !/^https?:\/\//i.test(v.url) ? 'Masukkan URL lengkap diawali https://' : !re.test(v.url) ? 'URL harus berasal dari ' + name + '.' : '';
+serviceTool({ id: 'tiktok-dl', key: 'tiktok', name: 'TikTok (No Watermark)', badge: 'TERPOPULER', description: 'Video TikTok tanpa watermark.', keywords: 'tiktok video tanpa watermark unduh download', icon: '<path d="M12 3v12a4 4 0 1 1-4-4M12 3c0 3 2 5 5 5"/>', action: 'Proses video', fields: [{ id: 'url', label: 'URL video TikTok', ph: 'https://vt.tiktok.com/...' }], validate: urlRule(/tiktok\.com/i, 'tiktok.com'), label: v => v.url });
+serviceTool({ id: 'instagram-dl', key: 'instagram', name: 'Instagram (Reels / Video)', description: 'Unduh Reels atau video Instagram.', keywords: 'instagram reels video unduh download ig', icon: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/>', action: 'Proses video', fields: [{ id: 'url', label: 'URL Reels / video', ph: 'https://www.instagram.com/reel/...' }], validate: urlRule(/instagram\.com/i, 'instagram.com'), label: v => v.url });
+serviceTool({ id: 'youtube-dl', key: 'youtube', name: 'YouTube (Video & MP3)', description: 'Video MP4 atau audio MP3 dari YouTube.', keywords: 'youtube video mp3 mp4 audio unduh download yt', icon: '<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3z"/>', action: 'Proses', fields: [{ id: 'url', label: 'URL YouTube', ph: 'https://youtu.be/...' }, { id: 'format', label: 'Format', opts: [['mp4', 'Video MP4'], ['mp3', 'Audio MP3']] }], validate: urlRule(/(youtube\.com|youtu\.be)/i, 'youtube.com / youtu.be'), label: v => v.format.toUpperCase() + ' · ' + v.url });
+serviceTool({ id: 'ryntax-nokos', key: 'nokos', name: 'Ryntax Nokos', badge: ['DISEMATKAN', 'TERPOPULER'], description: 'Pesan nomor virtual untuk verifikasi OTP.', keywords: 'nokos nomor kosong virtual otp whatsapp telegram verifikasi', icon: '<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/>', action: 'Pesan nomor', fields: [{ id: 'app', label: 'Layanan', opts: ['WhatsApp', 'Telegram', 'Instagram', 'TikTok', 'Lainnya'] }, { id: 'country', label: 'Negara', opts: ['Indonesia', 'Amerika Serikat', 'Inggris', 'Malaysia'] }], validate: null, label: v => v.app + ' · ' + v.country });
+
+/* ================= Tahap 3: tool tambahan ================= */
+const dlBlob = (blob, name) => { const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 1000); };
+const loadImg = file => new Promise((ok, no) => { const i = new Image(), u = URL.createObjectURL(file); i.onload = () => ok(i); i.onerror = () => no(new Error('Gambar tidak bisa dibaca')); i.src = u; });
+
+/* ---------- QR Reader ---------- */
+registerTool({
+  id: 'qr-reader', name: 'QR Reader', category: 'Utilities', description: 'Scan dengan kamera atau unggah gambar QR.', keywords: 'qr scan baca decode kamera upload reader',
+  icon: '<path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3M4 12h16"/>',
+  mount(root) {
+    root.innerHTML = '<input id="rd-f" type="file" accept="image/*" class="field"><div class="flex gap-2 mt-3"><button id="rd-cam" class="btn btn-primary" type="button">Buka kamera</button><button id="rd-stop" class="btn" type="button">Stop</button></div><video id="rd-v" class="mt-3 hidden" playsinline muted style="width:100%;max-width:340px;border:2.5px solid #111"></video><textarea id="rd-res" class="field mt-4" rows="4" readonly placeholder="Hasil scan muncul di sini"></textarea><div class="flex gap-2 mt-3"><button id="rd-copy" class="btn" type="button">Salin</button><button id="rd-open" class="btn" type="button">Buka tautan</button></div><p id="rd-msg" class="text-sm mt-2 font-semibold"></p>';
+    const $ = s => Util.$(s, root), cv = document.createElement('canvas'), ctx = cv.getContext('2d', { willReadFrequently: true }); let stream = null;
+    const msg = (t, bad) => { $('#rd-msg').style.color = bad ? '#d93a3a' : 'inherit'; $('#rd-msg').textContent = t; };
+    function dec() { if (typeof jsQR === 'undefined') { msg('Library jsQR gagal dimuat. Periksa koneksi internet.', 1); return null; } const d = ctx.getImageData(0, 0, cv.width, cv.height), r = jsQR(d.data, d.width, d.height); return r ? r.data : null; }
+    function stop() { if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; $('#rd-v').classList.add('hidden'); }
+    $('#rd-f').addEventListener('change', async e => {
+      const f = e.target.files[0]; if (!f) return;
+      try { const i = await loadImg(f), k = Math.min(1, 1000 / Math.max(i.width, i.height)); cv.width = i.width * k; cv.height = i.height * k; ctx.drawImage(i, 0, 0, cv.width, cv.height); const r = dec(); if (r) { $('#rd-res').value = r; msg('QR terbaca.'); } else msg('QR tidak ditemukan. Coba gambar yang lebih jelas.', 1); } catch (er) { msg(er.message, 1); }
+    });
+    $('#rd-cam').addEventListener('click', async () => {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { msg('Kamera tidak didukung. Gunakan unggah gambar.', 1); return; }
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        const v = $('#rd-v'); v.srcObject = stream; v.classList.remove('hidden'); await v.play(); msg('Arahkan kamera ke QR code...');
+        (function loop() {
+          if (!stream || !root.isConnected) { stop(); return; }
+          if (v.readyState === 4) { cv.width = v.videoWidth; cv.height = v.videoHeight; ctx.drawImage(v, 0, 0); const r = dec(); if (r) { $('#rd-res').value = r; msg('QR terbaca.'); stop(); return; } }
+          requestAnimationFrame(loop);
+        })();
+      } catch (er) { msg('Izin kamera ditolak atau kamera tidak tersedia. Halaman harus HTTPS (Netlify sudah HTTPS).', 1); }
+    });
+    $('#rd-stop').addEventListener('click', stop);
+    $('#rd-copy').addEventListener('click', () => Util.copy($('#rd-res').value));
+    $('#rd-open').addEventListener('click', () => { const v = $('#rd-res').value.trim(); if (/^https?:\/\//i.test(v)) window.open(v, '_blank', 'noopener,noreferrer'); else Util.toast('Hasil bukan tautan http(s)'); });
+  }
+});
+
+/* ---------- Calculator Pro ---------- */
+registerTool({
+  id: 'calculator-pro', name: 'Calculator Pro', category: 'Calculators', description: 'Kalkulator lengkap dan konversi satuan.', keywords: 'kalkulator hitung konversi satuan panjang berat suhu calculator',
+  icon: '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>',
+  mount(root) {
+    const keys = ['C', '(', ')', '÷', '7', '8', '9', '×', '4', '5', '6', '−', '1', '2', '3', '+', '0', '.', '⌫', '='];
+    const U = { 'Panjang': { 'Meter': 1, 'Kilometer': 1000, 'Sentimeter': 0.01, 'Milimeter': 0.001, 'Mil': 1609.344, 'Kaki': 0.3048, 'Inci': 0.0254 }, 'Berat': { 'Kilogram': 1, 'Gram': 0.001, 'Miligram': 1e-6, 'Ton': 1000, 'Pon': 0.45359237, 'Ons': 0.028349523 }, 'Suhu': { 'Celsius': 1, 'Fahrenheit': 1, 'Kelvin': 1 } };
+    root.innerHTML = '<div class="grid md:grid-cols-2 gap-6"><div><input id="ca-d" class="field tabular" style="text-align:right;font-size:1.6rem" readonly value="0" aria-label="Layar kalkulator"><div class="grid grid-cols-4 gap-2 mt-3">' + keys.map(k => '<button type="button" class="btn' + (k === '=' ? ' btn-primary' : '') + '" data-k="' + k + '" style="padding:.9rem 0;font-size:1.1rem">' + k + '</button>').join('') + '</div><button id="ca-cp" class="btn mt-3" type="button">Salin hasil</button></div><div><h3 class="font-extrabold mb-3">Konversi satuan</h3>' + fieldGrid([{ id: 'cat', label: 'Jenis', opts: Object.keys(U) }, { id: 'v', label: 'Nilai', attr: 'type="number" step="any" value="1"' }, { id: 'a', label: 'Dari', opts: [] }, { id: 'b', label: 'Ke', opts: [] }], 'cu-') + '<div id="cu-out" class="stat mt-4 font-bold tabular" aria-live="polite"></div></div></div>';
+    const $ = s => Util.$(s, root); let ex = '';
+    const show = t => { $('#ca-d').value = t || '0'; };
+    Util.$$('[data-k]', root).forEach(b => b.addEventListener('click', () => {
+      const k = b.dataset.k;
+      if (k === 'C') ex = ''; else if (k === '⌫') ex = ex.slice(0, -1);
+      else if (k === '=') {
+        try { const s = ex.replace(/÷/g, '/').replace(/×/g, '*').replace(/−/g, '-'); if (!/^[0-9+\-*/().\s]+$/.test(s)) throw 0; const r = Function('"use strict";return (' + s + ')')(); if (!isFinite(r)) throw 0; ex = String(+r.toFixed(10)); } catch (e) { show('Error'); ex = ''; return; }
+      } else ex += k;
+      show(ex);
+    }));
+    $('#ca-cp').addEventListener('click', () => Util.copy($('#ca-d').value === '0' ? '' : $('#ca-d').value));
+    const fill = () => { const o = Object.keys(U[$('#cu-cat').value]).map(k => '<option>' + k + '</option>').join(''); $('#cu-a').innerHTML = o; $('#cu-b').innerHTML = o; $('#cu-b').selectedIndex = 1; conv(); };
+    function conv() {
+      const c = $('#cu-cat').value, v = parseFloat($('#cu-v').value), a = $('#cu-a').value, b = $('#cu-b').value; let r;
+      if (isNaN(v)) { $('#cu-out').textContent = 'Masukkan angka.'; return; }
+      if (c === 'Suhu') { const C = a === 'Celsius' ? v : a === 'Fahrenheit' ? (v - 32) * 5 / 9 : v - 273.15; r = b === 'Celsius' ? C : b === 'Fahrenheit' ? C * 9 / 5 + 32 : C + 273.15; }
+      else r = v * U[c][a] / U[c][b];
+      $('#cu-out').textContent = Util.fmt(v, 6) + ' ' + a + ' = ' + Util.fmt(r, 6) + ' ' + b;
+    }
+    $('#cu-cat').addEventListener('input', fill); ['#cu-v', '#cu-a', '#cu-b'].forEach(s => $(s).addEventListener('input', conv)); fill();
+  }
+});
+
+/* ---------- Tic Tac Toe ---------- */
+registerTool({
+  id: 'tic-tac-toe', name: 'Tic Tac Toe', category: 'Games', description: 'Main berdua atau lawan AI.', keywords: 'tic tac toe xo game pvp ai permainan',
+  icon: '<path d="M9 3v18M15 3v18M3 9h18M3 15h18"/>',
+  mount(root) {
+    root.innerHTML = ctl({ id: 'm', label: 'Mode', opts: [['ai', 'Lawan AI'], ['pvp', '2 pemain']] }, 'tt-') + '<p id="tt-st" class="font-bold my-3" aria-live="polite"></p><div id="tt-b" class="grid grid-cols-3 gap-2" style="max-width:300px"></div><button id="tt-r" class="btn btn-primary mt-4" type="button">Reset</button>';
+    const $ = s => Util.$(s, root), W = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]]; let b, turn, over;
+    const win = bd => { for (const l of W) if (bd[l[0]] && bd[l[0]] === bd[l[1]] && bd[l[0]] === bd[l[2]]) return bd[l[0]]; return bd.includes('') ? null : 'D'; };
+    function mm(bd, p) { const w = win(bd); if (w === 'O') return 1; if (w === 'X') return -1; if (w === 'D') return 0; let best = p === 'O' ? -2 : 2; bd.forEach((v, i) => { if (!v) { bd[i] = p; const s = mm(bd, p === 'O' ? 'X' : 'O'); bd[i] = ''; best = p === 'O' ? Math.max(best, s) : Math.min(best, s); } }); return best; }
+    function ai() { const free = b.map((v, i) => v ? -1 : i).filter(i => i >= 0); if (Math.random() < 0.25) return pick(free); let bi = free[0], bs = -2; free.forEach(i => { b[i] = 'O'; const s = mm(b, 'X'); b[i] = ''; if (s > bs) { bs = s; bi = i; } }); return bi; }
+    function draw() {
+      const w = win(b); over = !!w;
+      $('#tt-st').textContent = w === 'D' ? 'Seri!' : w ? 'Pemenang: ' + w : 'Giliran: ' + turn;
+      $('#tt-b').innerHTML = b.map((v, i) => '<button type="button" class="btn" data-i="' + i + '" style="height:5rem;font-size:2rem">' + v + '</button>').join('');
+      Util.$$('[data-i]', root).forEach(el => el.addEventListener('click', () => play(+el.dataset.i)));
+    }
+    function play(i) {
+      if (over || b[i]) return; b[i] = turn; turn = turn === 'X' ? 'O' : 'X'; draw();
+      if (!over && $('#tt-m').value === 'ai' && turn === 'O') { b[ai()] = 'O'; turn = 'X'; draw(); }
+    }
+    const reset = () => { b = Array(9).fill(''); turn = 'X'; over = false; draw(); };
+    $('#tt-r').addEventListener('click', reset); $('#tt-m').addEventListener('input', reset); reset();
+  }
+});
+
+/* ---------- Stopwatch ---------- */
+registerTool({
+  id: 'stopwatch', name: 'Stopwatch', category: 'Utilities', description: 'Timer presisi dengan Lap.', keywords: 'stopwatch timer lap waktu hitung',
+  icon: '<circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2M9 2h6"/>',
+  mount(root) {
+    root.innerHTML = '<div id="sw-d" class="tabular text-center font-extrabold" style="font-size:3rem" aria-live="off">00:00.00</div><div class="flex flex-wrap gap-2 justify-center mt-4"><button id="sw-go" class="btn btn-primary" type="button">Start</button><button id="sw-lap" class="btn" type="button">Lap</button><button id="sw-rs" class="btn" type="button">Reset</button></div><ol id="sw-l" class="grid gap-2 mt-5"></ol>';
+    const $ = s => Util.$(s, root); let t0 = 0, acc = 0, run = false, laps = [];
+    const f = ms => String(Math.floor(ms / 60000)).padStart(2, '0') + ':' + String(Math.floor(ms / 1000) % 60).padStart(2, '0') + '.' + String(Math.floor(ms % 1000 / 10)).padStart(2, '0');
+    const now = () => acc + (run ? performance.now() - t0 : 0);
+    (function tick() { if (!root.isConnected) return; $('#sw-d').textContent = f(now()); requestAnimationFrame(tick); })();
+    const list = () => { $('#sw-l').innerHTML = laps.map((l, i) => '<li class="stat flex justify-between tabular"><b>Lap ' + (i + 1) + '</b><span>' + f(l.d) + '</span><span class="muted">' + f(l.t) + '</span></li>').reverse().join(''); };
+    $('#sw-go').addEventListener('click', () => { if (run) { acc += performance.now() - t0; run = false; $('#sw-go').textContent = 'Lanjut'; } else { t0 = performance.now(); run = true; $('#sw-go').textContent = 'Pause'; } });
+    $('#sw-lap').addEventListener('click', () => { if (!run) return; const t = now(); laps.push({ t: t, d: t - (laps.length ? laps[laps.length - 1].t : 0) }); list(); });
+    $('#sw-rs').addEventListener('click', () => { run = false; acc = 0; laps = []; $('#sw-go').textContent = 'Start'; list(); });
+  }
+});
+
+/* ---------- Block Puzzle ---------- */
+registerTool({
+  id: 'block-puzzle', name: 'Block Puzzle', category: 'Games', badge: 'TERPOPULER', description: 'Susun blok, hapus baris, kejar skor.', keywords: 'block puzzle game blok susun grid skor permainan',
+  icon: '<rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="8" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/>',
+  mount(root) {
+    root.innerHTML = '<div class="flex justify-between items-center mb-3"><b>Skor: <span id="bp-s" class="tabular">0</span></b><b>Terbaik: <span id="bp-hi" class="tabular">0</span></b><button id="bp-r" class="btn" type="button">Main lagi</button></div><div id="bp-g" class="grid gap-1 mx-auto" style="grid-template-columns:repeat(8,1fr);max-width:340px"></div><p id="bp-m" class="text-center font-bold mt-3" aria-live="polite">Pilih blok, lalu ketuk kotak untuk menaruhnya (pojok kiri atas blok).</p><div id="bp-p" class="flex gap-4 justify-center mt-3"></div>';
+    const $ = s => Util.$(s, root), N = 8, SH = [[[1]], [[1, 1]], [[1], [1]], [[1, 1], [1, 1]], [[1, 1, 1]], [[1], [1], [1]], [[1, 0], [1, 1]], [[1, 1, 1], [1, 0, 0]], [[1, 1, 1, 1]]], COL = ['#FF4FA3', '#FFE14D', '#9ADBFF', '#A8F0C6', '#FF8AD1'];
+    let g, pcs, sel, score, hi = 0;
+    const newSet = () => [0, 1, 2].map(() => ({ s: pick(SH), c: pick(COL) }));
+    const can = (s, r, c) => s.every((row, i) => row.every((v, j) => !v || (r + i < N && c + j < N && !g[r + i][c + j])));
+    const any = () => pcs.some(p => p && g.some((row, r) => row.some((_, c) => can(p.s, r, c))));
+    function render() {
+      $('#bp-s').textContent = score; $('#bp-hi').textContent = hi;
+      $('#bp-g').innerHTML = g.map((row, r) => row.map((v, c) => '<button type="button" data-r="' + r + '" data-c="' + c + '" aria-label="Kotak ' + (r + 1) + ',' + (c + 1) + '" style="aspect-ratio:1;border:2px solid #111;background:' + (v || 'var(--field)') + '"></button>').join('')).join('');
+      $('#bp-p').innerHTML = pcs.map((p, i) => p ? '<button type="button" data-p="' + i + '" class="btn" style="padding:.4rem;' + (i === sel ? 'background:var(--accent)' : '') + '"><div style="display:grid;grid-template-columns:repeat(' + p.s[0].length + ',16px);gap:2px">' + p.s.map(row => row.map(v => '<i style="width:16px;height:16px;background:' + (v ? p.c : 'transparent') + ';border:' + (v ? '1.5px solid #111' : '0') + '"></i>').join('')).join('') + '</div></button>' : '<span style="width:3rem"></span>').join('');
+      Util.$$('[data-p]', root).forEach(b => b.addEventListener('click', () => { sel = +b.dataset.p; render(); }));
+      Util.$$('[data-r]', root).forEach(b => b.addEventListener('click', () => put(+b.dataset.r, +b.dataset.c)));
+    }
+    function put(r, c) {
+      const p = pcs[sel]; if (!p) return; if (!can(p.s, r, c)) { Util.toast('Tidak muat di sini'); return; }
+      p.s.forEach((row, i) => row.forEach((v, j) => { if (v) g[r + i][c + j] = p.c; })); score += p.s.flat().filter(Boolean).length; pcs[sel] = null;
+      const rows = g.map((row, i) => row.every(Boolean) ? i : -1).filter(i => i >= 0), cols = [...Array(N).keys()].filter(j => g.every(row => row[j]));
+      rows.forEach(i => g[i].fill(0)); cols.forEach(j => g.forEach(row => { row[j] = 0; })); score += (rows.length + cols.length) * 10;
+      if (pcs.every(x => !x)) pcs = newSet(); sel = pcs.findIndex(x => x); hi = Math.max(hi, score); render();
+      if (!any()) $('#bp-m').textContent = 'Game over! Skor akhir: ' + score;
+    }
+    const start = () => { g = Array.from({ length: N }, () => Array(N).fill(0)); pcs = newSet(); sel = 0; score = 0; $('#bp-m').textContent = 'Pilih blok, lalu ketuk kotak untuk menaruhnya (pojok kiri atas blok).'; render(); };
+    $('#bp-r').addEventListener('click', start); start();
+  }
+});
+
+/* ---------- TTS Customizer ---------- */
+registerTool({
+  id: 'tts-customizer', name: 'TTS Customizer', category: 'Creative', description: 'Teks jadi suara. Atur suara, kecepatan, nada.', keywords: 'tts text to speech suara voice mp3 baca teks audio',
+  icon: '<path d="M11 5 6 9H3v6h3l5 4zM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([{ id: 't', label: 'Teks', area: true, val: 'Halo, ini contoh suara dari All Tools.' }, { id: 'v', label: 'Suara', opts: [] }, { id: 'r', label: 'Kecepatan (0,5–2)', attr: 'type="range" min="0.5" max="2" step="0.1" value="1"' }, { id: 'p', label: 'Nada (0–2)', attr: 'type="range" min="0" max="2" step="0.1" value="1"' }], 'ts-') + '<div class="flex flex-wrap gap-2 mt-4"><button id="ts-play" class="btn btn-primary" type="button">Putar</button><button id="ts-stop" class="btn" type="button">Stop</button><button id="ts-dl" class="btn" type="button">Unduh MP3</button></div><p id="ts-m" class="muted text-xs mt-3">Web Speech API hanya memutar suara, tidak bisa menyimpannya ke file. Tombol Unduh MP3 butuh backend TTS (isi ENDPOINTS.tts).</p>';
+    const $ = s => Util.$(s, root);
+    if (!('speechSynthesis' in window)) { $('#ts-m').textContent = 'Browser ini tidak mendukung Web Speech API.'; return; }
+    let vs = [];
+    const load = () => { vs = speechSynthesis.getVoices(); $('#ts-v').innerHTML = vs.map((v, i) => '<option value="' + i + '">' + esc(v.name + ' (' + v.lang + ')') + '</option>').join(''); const id = vs.findIndex(v => /^id/i.test(v.lang)); if (id >= 0) $('#ts-v').value = id; };
+    load(); speechSynthesis.onvoiceschanged = load;
+    $('#ts-play').addEventListener('click', () => { speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance($('#ts-t').value); const v = vs[+$('#ts-v').value]; if (v) { u.voice = v; u.lang = v.lang; } u.rate = +$('#ts-r').value; u.pitch = +$('#ts-p').value; speechSynthesis.speak(u); });
+    $('#ts-stop').addEventListener('click', () => speechSynthesis.cancel());
+    $('#ts-dl').addEventListener('click', async () => {
+      if (!ENDPOINTS.tts) { Util.toast('Backend TTS belum diatur (ENDPOINTS.tts)'); return; }
+      try { const v = vs[+$('#ts-v').value]; const r = await fetch(ENDPOINTS.tts, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: $('#ts-t').value, voice: v && v.name, lang: v && v.lang, rate: +$('#ts-r').value, pitch: +$('#ts-p').value }) }); if (!r.ok) throw 0; dlBlob(await r.blob(), 'suara.mp3'); } catch (e) { Util.toast('Gagal mengunduh dari backend TTS'); }
+    });
+  }
+});
+
+/* ---------- Fake Lobby FF & ML ---------- */
+function lobbyTool(c) {
+  registerTool({
+    id: c.id, name: c.name, category: 'Creative', description: c.desc, keywords: c.kw, icon: '<rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/>',
+    mount(root) {
+      root.innerHTML = fieldGrid([{ id: 'n', label: 'Nickname', attr: 'value="Pemain01"' }, { id: 'r', label: c.rankLabel, attr: 'value="' + c.rankVal + '"' }, { id: 's', label: 'Nama squad', attr: 'value="Squad Kita"' }, { id: 'f', label: 'Frame avatar', opts: [['#f5c542', 'Emas'], ['#cfd8e3', 'Perak'], ['#ff3b3b', 'Merah'], ['#38f9d7', 'Neon']] }], 'lb-') + '<div class="mt-5 flex justify-center"><canvas id="lb-c" style="width:100%;max-width:520px;height:auto;border:2.5px solid #111"></canvas></div><div class="mt-4 flex justify-center"><button id="lb-dl" class="btn btn-primary" type="button">Unduh PNG</button></div><p class="muted text-xs mt-3 text-center">Mockup bergaya lobi, hanya untuk hiburan dan konten kreatif. Jangan dipakai untuk menipu atau meniru akun orang lain.</p>';
+      const $ = s => Util.$(s, root);
+      function draw() {
+        const cv = $('#lb-c'), x = cv.getContext('2d'), W = 720, H = 405; cv.width = W; cv.height = H;
+        const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, c.c1); g.addColorStop(1, c.c2); x.fillStyle = g; x.fillRect(0, 0, W, H);
+        x.fillStyle = 'rgba(255,255,255,.08)'; for (let i = -2; i < 8; i++) { x.beginPath(); x.moveTo(i * 120, H); x.lineTo(i * 120 + 90, 0); x.lineTo(i * 120 + 150, 0); x.lineTo(i * 120 + 60, H); x.fill(); }
+        const nm = $('#lb-n').value.trim() || 'Nickname', F = 'bold 30px Arial,Helvetica,sans-serif';
+        x.fillStyle = '#fff'; x.font = 'bold 22px Arial'; x.fillText(c.title, 28, 44);
+        x.strokeStyle = $('#lb-f').value; x.lineWidth = 8; x.fillStyle = 'rgba(0,0,0,.4)'; x.beginPath(); x.arc(150, 190, 74, 0, 7); x.fill(); x.stroke();
+        x.fillStyle = '#fff'; x.font = 'bold 72px Arial'; x.textAlign = 'center'; x.fillText(nm.charAt(0).toUpperCase(), 150, 215);
+        x.textAlign = 'left'; x.font = F; x.fillText(nm, 270, 150);
+        x.fillStyle = c.acc; x.font = 'bold 24px Arial'; x.fillText($('#lb-r').value, 270, 192);
+        x.fillStyle = '#fff'; x.font = '22px Arial'; x.fillText('Squad: ' + $('#lb-s').value, 270, 232);
+        x.fillStyle = c.acc; roundRect(x, W - 250, H - 96, 210, 60, 12); x.fill(); x.fillStyle = '#111'; x.font = 'bold 28px Arial'; x.textAlign = 'center'; x.fillText('MULAI', W - 145, H - 56); x.textAlign = 'left';
+      }
+      Util.$$('input,select', root).forEach(e => e.addEventListener('input', draw));
+      $('#lb-dl').addEventListener('click', () => saveCanvas($('#lb-c'), c.id + '.png')); draw();
+    }
+  });
+}
+lobbyTool({ id: 'fake-lobby-ff', name: 'Fake Lobby FF', desc: 'Mockup kartu lobi bertema Free Fire.', kw: 'fake lobby ff free fire lobi kartu mockup nickname', title: 'LOBI · FREE FIRE', rankLabel: 'Rank / level', rankVal: 'Heroic · Lv. 70', c1: '#ff7a18', c2: '#2b0f00', acc: '#ffd23f' });
+lobbyTool({ id: 'fake-lobby-ml', name: 'Fake Lobby ML', desc: 'Mockup kartu lobi bertema Mobile Legends.', kw: 'fake lobby ml mobile legends lobi kartu mockup nickname', title: 'LOBI · MOBILE LEGENDS', rankLabel: 'Rank / level', rankVal: 'Mythic · Lv. 120', c1: '#2d5bff', c2: '#1a0b4d', acc: '#7df9ff' });
+
+/* ---------- Ryntax Clips ---------- */
+registerTool({
+  id: 'ryntax-clips', name: 'Ryntax Clips', category: 'Media', badge: 'PREMIUM', description: 'Video pendek · trending · akun.', keywords: 'clips video pendek trending akun feed reels short',
+  icon: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="m10 9 5 3-5 3z"/>',
+  mount(root) {
+    root.innerHTML = '<div class="flex flex-wrap gap-2 mb-3" id="cl-tabs"></div><div class="flex flex-wrap gap-2 mb-4" id="cl-cats"></div><div id="cl-out" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div><p id="cl-note" class="muted text-xs mt-3">Data contoh. Isi ENDPOINTS.clips dengan URL JSON [{"t":"judul","u":"akun","c":"kategori","l":123}] untuk memakai data asli.</p>';
+    let clips = [{ t: 'Kucing salah loncat', u: 'meong', c: 'Lucu', l: 1280 }, { t: 'Cover akustik hujan', u: 'nada', c: 'Musik', l: 940 }, { t: 'Clutch 1 lawan 4', u: 'proplayer', c: 'Game', l: 2210 }, { t: 'Nasi goreng 5 menit', u: 'dapurku', c: 'Kuliner', l: 760 }, { t: 'Prank balon', u: 'meong', c: 'Lucu', l: 530 }, { t: 'Gitar santai sore', u: 'nada', c: 'Musik', l: 1105 }, { t: 'Combo tak terduga', u: 'proplayer', c: 'Game', l: 1870 }, { t: 'Es kopi susu rumahan', u: 'dapurku', c: 'Kuliner', l: 690 }];
+    const COL = ['#FFE14D', '#FF8AD1', '#9ADBFF', '#A8F0C6', '#ffffff']; const liked = new Set(); let tab = 'Feed', cat = 'Semua';
+    const $ = s => Util.$(s, root);
+    function render() {
+      $('#cl-tabs').innerHTML = ['Feed', 'Trending', 'Akun'].map(t => '<button type="button" class="btn' + (t === tab ? ' active' : '') + '" data-t="' + t + '">' + t + '</button>').join('');
+      const cats = ['Semua'].concat(Array.from(new Set(clips.map(c => c.c))));
+      $('#cl-cats').innerHTML = tab === 'Akun' ? '' : cats.map(c => '<button type="button" class="chip' + (c === cat ? ' active' : '') + '" data-c="' + esc(c) + '">' + esc(c) + '</button>').join('');
+      let list = clips.map((c, i) => Object.assign({ i: i }, c)).filter(c => cat === 'Semua' || c.c === cat);
+      if (tab === 'Trending') list.sort((a, b) => b.l - a.l);
+      let head = '';
+      if (tab === 'Akun') { const mine = clips.filter(c => c.u === 'meong'); list = clips.map((c, i) => Object.assign({ i: i }, c)).filter(c => c.u === 'meong'); head = '<div class="stat col-span-full flex items-center gap-4"><span class="tool-icon" style="width:3.5rem;height:3.5rem;font-weight:900;font-size:1.5rem">M</span><div><b>@meong</b><div class="muted text-sm">' + mine.length + ' klip · ' + Util.fmt(mine.reduce((a, c) => a + c.l, 0), 0) + ' suka · 4,2 rb pengikut</div></div></div>'; }
+      $('#cl-out').innerHTML = head + list.map(c => '<div class="stat" style="padding:.5rem"><div style="aspect-ratio:9/12;background:' + COL[c.i % 5] + ';border:2px solid #111;display:flex;align-items:center;justify-content:center;color:#111;font-size:2rem">▶</div><b class="block text-sm mt-2 leading-tight">' + esc(c.t) + '</b><span class="muted text-xs">@' + esc(c.u) + ' · ' + esc(c.c) + '</span><button type="button" class="btn mt-2" data-l="' + c.i + '" style="padding:.2rem .6rem">' + (liked.has(c.i) ? '♥' : '♡') + ' ' + Util.fmt(c.l + (liked.has(c.i) ? 1 : 0), 0) + '</button></div>').join('');
+      Util.$$('[data-t]', root).forEach(b => b.addEventListener('click', () => { tab = b.dataset.t; render(); }));
+      Util.$$('[data-c]', root).forEach(b => b.addEventListener('click', () => { cat = b.dataset.c; render(); }));
+      Util.$$('[data-l]', root).forEach(b => b.addEventListener('click', () => { const i = +b.dataset.l; liked.has(i) ? liked.delete(i) : liked.add(i); render(); }));
+    }
+    render();
+    if (ENDPOINTS.clips) fetch(ENDPOINTS.clips).then(r => r.json()).then(d => { if (Array.isArray(d) && d.length) { clips = d; $('#cl-note').textContent = 'Data dari endpoint Anda.'; render(); } }).catch(() => { $('#cl-note').textContent = 'Endpoint klip gagal dimuat. Menampilkan data contoh.'; });
+  }
+});
+
+/* ---------- Foto ke Link & File ke Link ---------- */
+function uploadTool(c) {
+  registerTool({
+    id: c.id, name: c.name, category: 'Utilities', description: c.desc, keywords: c.kw, icon: '<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
+    mount(root) {
+      root.innerHTML = '<input id="up-f" type="file" ' + c.accept + ' class="field"><div id="up-pv" class="mt-3"></div><div class="mt-3"><button id="up-go" class="btn btn-primary" type="button">Upload</button></div><div class="h-3 mt-3 hidden" id="up-pb" style="border:2.5px solid var(--line)"><div id="up-bar" style="height:100%;width:0;background:var(--accent)"></div></div><p id="up-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><div id="up-res" class="hidden flex gap-2 mt-2"><input id="up-url" class="field" readonly><button id="up-cp" class="btn" type="button">Salin</button></div><details class="mt-4 text-sm"><summary class="font-semibold cursor-pointer">Cara menghubungkan storage (' + c.hint + ')</summary><pre class="stat mt-2 text-xs" style="white-space:pre-wrap">Isi ENDPOINTS.' + c.key + ' dengan URL backend Anda.\nRequest : POST multipart/form-data, field "file"\nBalasan : {"url":"https://..."}\nBuat backend tipis (Netlify Function, Supabase Edge Function, atau Firebase Function) yang meneruskan file ke penyimpanan. Simpan kunci/secret hanya di backend, jangan di file HTML.</pre></details>';
+      const $ = s => Util.$(s, root), st = (t, col) => { $('#up-st').style.color = col || 'inherit'; $('#up-st').textContent = t; };
+      $('#up-f').addEventListener('change', e => { const f = e.target.files[0], pv = $('#up-pv'); pv.innerHTML = ''; if (!f) return; if (f.type.startsWith('image/')) { const im = document.createElement('img'); im.src = URL.createObjectURL(f); im.alt = 'Pratinjau'; im.style.cssText = 'max-width:280px;width:100%;border:2.5px solid #111'; pv.appendChild(im); } const p = document.createElement('p'); p.className = 'text-sm mt-2'; p.textContent = f.name + ' · ' + Util.fmt(f.size / 1024, 1) + ' KB'; pv.appendChild(p); });
+      $('#up-go').addEventListener('click', () => {
+        const f = $('#up-f').files[0]; if (!f) { st('Pilih file terlebih dahulu.', '#d93a3a'); return; }
+        if (c.photo && !f.type.startsWith('image/')) { st('File harus berupa gambar.', '#d93a3a'); return; }
+        if (f.size > 4 * 1024 * 1024) { st('Ukuran file maksimal 4 MB (batas Netlify Functions).', '#d93a3a'); return; }
+        const ep = ENDPOINTS[c.key]; if (!ep) { st('Endpoint upload belum diatur (mode placeholder). Isi ENDPOINTS.' + c.key + ' di kode.', '#b86b00'); return; }
+        const fd = new FormData(), x = new XMLHttpRequest(); fd.append('file', f); $('#up-pb').classList.remove('hidden'); st('Mengunggah...');
+        x.upload.onprogress = e => { if (e.lengthComputable) $('#up-bar').style.width = Math.round(e.loaded / e.total * 100) + '%'; };
+        x.onload = () => { try { const d = JSON.parse(x.responseText); if (x.status >= 300 || !/^https?:\/\//.test(d.url || '')) throw 0; $('#up-url').value = d.url; $('#up-res').classList.remove('hidden'); st('Upload selesai.', '#1f8a4c'); } catch (e) { st('Balasan server tidak valid (butuh {"url":"https://..."}).', '#d93a3a'); } };
+        x.onerror = () => st('Gagal terhubung. Periksa endpoint dan CORS.', '#d93a3a'); x.open('POST', ep); x.send(fd);
+      });
+      $('#up-cp').addEventListener('click', () => Util.copy($('#up-url').value));
+    }
+  });
+}
+uploadTool({ id: 'foto-ke-link', key: 'foto', name: 'Foto ke Link', desc: 'Upload foto jadi link.', kw: 'foto gambar upload link url hosting', accept: 'accept="image/*"', photo: true, hint: 'Supabase/Firebase' });
+uploadTool({ id: 'file-ke-link', key: 'file', name: 'File ke Link', desc: 'Upload file jadi link (GoFile).', kw: 'file upload link url gofile hosting dokumen', accept: '', photo: false, hint: 'GoFile/Supabase/Firebase' });
+
+/* ---------- Get Code HTML ---------- */
+registerTool({
+  id: 'get-html', badge: 'PREMIUM', name: 'Get Code HTML', category: 'Utilities', description: 'Ambil source HTML halaman web.', keywords: 'html source kode halaman web url fetch cors proxy',
+  icon: '<path d="m8 8-5 4 5 4M16 8l5 4-5 4M14 4l-4 16"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([{ id: 'u', label: 'URL halaman', ph: 'https://contoh.com', area: true }, { id: 'p', label: 'Proxy CORS', opts: [['', 'Langsung (tanpa proxy)'], ['https://api.allorigins.win/raw?url=', 'AllOrigins'], ['https://corsproxy.io/?', 'corsproxy.io']].concat(ENDPOINTS.proxy ? [[ENDPOINTS.proxy, 'Proxy milik Anda']] : []) }], 'gh-') + '<div class="flex flex-wrap gap-2 mt-4"><button id="gh-go" class="btn btn-primary" type="button">Ambil kode</button><button id="gh-cp" class="btn" type="button">Salin</button><button id="gh-dl" class="btn" type="button">Unduh .html</button></div><p id="gh-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><textarea id="gh-out" class="field mt-3" rows="14" readonly spellcheck="false" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem"></textarea><p class="muted text-xs mt-2">Proxy publik gratis bisa lambat atau dibatasi. Untuk pemakaian serius, buat proxy sendiri (Netlify Function) lalu isi ENDPOINTS.proxy.</p>';
+    const $ = s => Util.$(s, root), st = (t, col) => { $('#gh-st').style.color = col || 'inherit'; $('#gh-st').textContent = t; };
+    $('#gh-u').rows = 2;
+    $('#gh-go').addEventListener('click', async () => {
+      const u = $('#gh-u').value.trim(); if (!/^https?:\/\//i.test(u)) { st('Masukkan URL lengkap diawali http:// atau https://', '#d93a3a'); return; }
+      st('Mengambil...'); $('#gh-out').value = '';
+      try { const r = await fetch($('#gh-p').value + ($('#gh-p').value ? encodeURIComponent(u) : u)); if (!r.ok) throw new Error('HTTP ' + r.status); const t = await r.text(); $('#gh-out').value = t; st('Berhasil · ' + Util.fmt(t.length, 0) + ' karakter', '#1f8a4c'); }
+      catch (e) { st(e instanceof TypeError ? 'Diblokir (kemungkinan CORS) atau jaringan gagal. Coba pilih proxy CORS, atau situs tersebut memang melarang akses.' : 'Gagal: ' + e.message, '#d93a3a'); }
+    });
+    $('#gh-cp').addEventListener('click', () => Util.copy($('#gh-out').value));
+    $('#gh-dl').addEventListener('click', () => { if ($('#gh-out').value) dlBlob(new Blob([$('#gh-out').value], { type: 'text/html' }), 'source.html'); });
+  }
+});
+
+/* ---------- Remove Background ---------- */
+registerTool({
+  id: 'remove-bg', name: 'Remove Background', category: 'Creative', badge: 'PREMIUM', description: 'Hapus background foto. Sebelum dan sesudah.', keywords: 'remove background hapus latar foto transparan png rembg',
+  icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M6 19c1-4 11-4 12 0"/>',
+  mount(root) {
+    root.innerHTML = '<input id="rb-f" type="file" accept="image/*" class="field">' + ctl({ id: 'tol', label: 'Toleransi warna latar (mode lokal)', attr: 'type="range" min="5" max="120" value="40"' }, 'rb-') + '<div class="flex flex-wrap gap-2 mt-3"><button id="rb-loc" class="btn btn-primary" type="button">Hapus (lokal)</button><button id="rb-api" class="btn" type="button">Hapus via API</button><button id="rb-dl" class="btn" type="button">Unduh PNG</button></div><p id="rb-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><div class="grid sm:grid-cols-2 gap-4 mt-4"><div><b class="text-sm">Sebelum</b><canvas id="rb-a" style="width:100%;height:auto;border:2.5px solid #111;background:#fff"></canvas></div><div><b class="text-sm">Sesudah</b><canvas id="rb-b" style="width:100%;height:auto;border:2.5px solid #111;background:repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0 0/16px 16px"></canvas></div></div><p class="muted text-xs mt-3">Mode lokal hanya cocok untuk latar polos satu warna (warna sudut kiri atas dipakai sebagai acuan). Untuk hasil sebenarnya pakai API: isi ENDPOINTS.rembg dengan backend yang meneruskan ke layanan seperti remove.bg (kunci API disimpan di backend). Request: POST multipart field "image", balasan berupa gambar PNG.</p>';
+    const $ = s => Util.$(s, root), st = (t, col) => { $('#rb-st').style.color = col || 'inherit'; $('#rb-st').textContent = t; }; let file = null;
+    $('#rb-f').addEventListener('change', async e => { file = e.target.files[0]; if (!file) return; try { const i = await loadImg(file), k = Math.min(1, 900 / Math.max(i.width, i.height)), a = $('#rb-a'), b = $('#rb-b'); a.width = b.width = Math.round(i.width * k); a.height = b.height = Math.round(i.height * k); a.getContext('2d').drawImage(i, 0, 0, a.width, a.height); b.getContext('2d').clearRect(0, 0, b.width, b.height); st('Gambar siap diproses.'); } catch (er) { st(er.message, '#d93a3a'); } });
+    $('#rb-loc').addEventListener('click', () => {
+      if (!file) { st('Pilih gambar dulu.', '#d93a3a'); return; }
+      const a = $('#rb-a'), b = $('#rb-b'), d = a.getContext('2d').getImageData(0, 0, a.width, a.height), p = d.data, r0 = p[0], g0 = p[1], b0 = p[2], tol = +$('#rb-tol').value * 4.4 / 4.4;
+      for (let i = 0; i < p.length; i += 4) { const dist = Math.sqrt((p[i] - r0) ** 2 + (p[i + 1] - g0) ** 2 + (p[i + 2] - b0) ** 2); if (dist < tol) p[i + 3] = 0; else if (dist < tol * 1.4) p[i + 3] = Math.round(255 * (dist - tol) / (tol * 0.4)); }
+      b.getContext('2d').putImageData(d, 0, 0); st('Selesai (mode lokal).', '#1f8a4c');
+    });
+    $('#rb-api').addEventListener('click', async () => {
+      if (!file) { st('Pilih gambar dulu.', '#d93a3a'); return; }
+      if (!ENDPOINTS.rembg) { st('Endpoint API belum diatur (isi ENDPOINTS.rembg). Sementara gunakan Hapus (lokal).', '#b86b00'); return; }
+      st('Memproses lewat API...');
+      try { const fd = new FormData(); fd.append('image', file); const r = await fetch(ENDPOINTS.rembg, { method: 'POST', body: fd }); if (!r.ok) throw 0; const bm = await createImageBitmap(await r.blob()), b = $('#rb-b'); b.width = bm.width; b.height = bm.height; b.getContext('2d').drawImage(bm, 0, 0); st('Selesai (API).', '#1f8a4c'); } catch (e) { st('API gagal. Periksa endpoint dan CORS.', '#d93a3a'); }
+    });
+    $('#rb-dl').addEventListener('click', () => saveCanvas($('#rb-b'), 'tanpa-background.png'));
+  }
+});
+
+/* ---------- Cek Phishing ---------- */
+registerTool({
+  id: 'phishing-check', name: 'Cek Phishing', category: 'Info', description: 'Cek URL mencurigakan langsung di browser.', keywords: 'phishing url link curiga scam penipuan aman cek keamanan',
+  icon: '<path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  mount(root) {
+    root.innerHTML = ctl({ id: 'u', label: 'URL yang ingin dicek', ph: 'https://contoh.com/login' }, 'ph-') + '<div class="mt-4"><button id="ph-go" class="btn btn-primary" type="button">Periksa</button></div><div id="ph-out" class="mt-4" aria-live="polite"></div><p class="muted text-xs mt-3">Pemeriksaan heuristik di browser, tanpa mengirim URL ke server mana pun. Ini bukan jaminan: situs berstatus Aman tetap bisa berbahaya.</p>';
+    const $ = s => Util.$(s, root);
+    function check() {
+      const raw = $('#ph-u').value.trim(); let u; if (!raw) return;
+      try { u = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(raw) ? raw : 'http://' + raw); } catch (e) { $('#ph-out').innerHTML = '<span style="color:#d93a3a">Format URL tidak valid.</span>'; return; }
+      let s = 0; const r = [], add = (n, t) => { s += n; r.push(t); }, h = u.hostname.toLowerCase(), full = raw.toLowerCase();
+      if (u.protocol === 'http:' && !/^https:/i.test(raw)) add(1, 'Tidak memakai HTTPS.');
+      if (raw.length > 75) add(1, 'URL sangat panjang (' + raw.length + ' karakter).');
+      if (/^\d{1,3}(\.\d{1,3}){3}$/.test(h)) add(3, 'Memakai alamat IP, bukan nama domain.');
+      if (raw.includes('@')) add(3, 'Mengandung karakter @ yang bisa menyamarkan tujuan sebenarnya.');
+      if (h.includes('xn--')) add(2, 'Domain memakai punycode (bisa meniru huruf lain).');
+      if (h.split('.').length > 4) add(2, 'Subdomain terlalu banyak.');
+      if ((h.match(/-/g) || []).length >= 2) add(1, 'Banyak tanda hubung pada domain.');
+      const kw = ['login', 'verify', 'verifikasi', 'secure', 'account', 'akun', 'update', 'password', 'konfirmasi', 'hadiah', 'gratis', 'bank', 'signin'].filter(k => full.includes(k));
+      if (kw.length >= 2) add(2, 'Banyak kata pancingan: ' + kw.join(', ') + '.'); else if (kw.length === 1) add(1, 'Mengandung kata pancingan: ' + kw[0] + '.');
+      if (/(^|\.)(bit\.ly|tinyurl\.com|t\.co|goo\.gl|s\.id|cutt\.ly|is\.gd)$/.test(h)) add(1, 'Memakai layanan pemendek URL.');
+      if (/\.(xyz|top|click|tk|ml|gq|cf|work|zip|icu)$/.test(h)) add(1, 'Domain dengan akhiran yang sering disalahgunakan.');
+      if (u.port && !['80', '443'].includes(u.port)) add(1, 'Memakai port tidak biasa (' + u.port + ').');
+      if ((raw.match(/%[0-9a-f]{2}/gi) || []).length > 3) add(1, 'Banyak karakter ter-encode (%xx).');
+      const lv = s >= 4 ? ['Berisiko', '#d93a3a'] : s >= 2 ? ['Waspada', '#b86b00'] : ['Aman', '#1f8a4c'];
+      $('#ph-out').innerHTML = '';
+      const t = document.createElement('div'); t.className = 'stat'; t.innerHTML = '<b style="font-size:1.5rem;color:' + lv[1] + '">' + lv[0] + '</b><span class="muted text-sm block">Skor risiko: ' + s + '</span>'; $('#ph-out').appendChild(t);
+      const ul = document.createElement('ul'); ul.className = 'grid gap-2 mt-3 text-sm'; (r.length ? r : ['Tidak ada tanda mencurigakan yang terdeteksi.']).forEach(x => { const li = document.createElement('li'); li.className = 'stat'; li.textContent = x; ul.appendChild(li); }); $('#ph-out').appendChild(ul);
+    }
+    $('#ph-go').addEventListener('click', check); $('#ph-u').addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+  }
+});
+
+/* ---------- Teks ke PDF ---------- */
+registerTool({
+  id: 'text-to-pdf', badge: 'PREMIUM', name: 'Teks ke PDF', category: 'Utilities', description: 'Ubah teks atau catatan jadi file PDF.', keywords: 'pdf teks catatan dokumen unduh jspdf konversi',
+  icon: '<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 14h6M9 18h4"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([{ id: 'n', label: 'Judul dokumen', attr: 'value="Catatan"' }, { id: 'z', label: 'Ukuran huruf', opts: [['10', '10'], ['12', '12'], ['14', '14']] }, { id: 't', label: 'Isi teks', area: true, ph: 'Tulis atau tempel catatan Anda...' }], 'pf-') + '<div class="mt-4"><button id="pf-go" class="btn btn-primary" type="button">Unduh PDF</button></div><p id="pf-st" class="text-sm mt-3 font-semibold"></p><p class="muted text-xs mt-2">Font bawaan PDF mendukung huruf Latin. Emoji dan aksara non-Latin tidak akan tampil.</p>';
+    const $ = s => Util.$(s, root);
+    $('#pf-go').addEventListener('click', () => {
+      const body = $('#pf-t').value; if (!body.trim()) { $('#pf-st').style.color = '#d93a3a'; $('#pf-st').textContent = 'Isi teks masih kosong.'; return; }
+      if (!window.jspdf) { $('#pf-st').style.color = '#d93a3a'; $('#pf-st').textContent = 'Library jsPDF gagal dimuat. Periksa koneksi internet.'; return; }
+      const d = new window.jspdf.jsPDF({ unit: 'mm', format: 'a4' }), sz = +$('#pf-z').value, lh = sz * 0.5; let y = 20;
+      d.setFontSize(18); d.text($('#pf-n').value || 'Dokumen', 15, y); y += 10; d.setFontSize(sz);
+      d.splitTextToSize(body, 180).forEach(l => { if (y > 280) { d.addPage(); y = 20; } d.text(l, 15, y); y += lh; });
+      d.save(($('#pf-n').value || 'dokumen').replace(/[^\w\-]+/g, '_') + '.pdf'); $('#pf-st').style.color = '#1f8a4c'; $('#pf-st').textContent = 'PDF dibuat.';
+    });
+  }
+});
+
+/* ================= Tahap 4: tool tambahan ================= */
+const setSt = (el, t, col) => { el.style.color = col || 'inherit'; el.textContent = t; };
+const store = { get(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* abaikan */ } } };
+
+/* ---------- Ryntax Deploy ---------- */
+registerTool({
+  id: 'ryntax-deploy', name: 'Ryntax Deploy', category: 'Utilities', badge: 'PREMIUM', description: 'Deploy website jadi link .netlify.app.', keywords: 'deploy netlify hosting website html zip drag drop link publish',
+  icon: '<path d="M12 3 4 7.5v9L12 21l8-4.5v-9z"/><path d="M12 12 4 7.5M12 12l8-4.5M12 12v9"/>',
+  mount(root) {
+    root.innerHTML = '<div id="dp-z" class="stat text-center font-semibold" style="padding:2.5rem 1rem;border-style:dashed;cursor:pointer" tabindex="0" role="button">Seret file HTML atau ZIP ke sini, atau ketuk untuk memilih</div><input id="dp-f" type="file" accept=".html,.htm,.zip" class="hidden"><ul id="dp-l" class="grid gap-2 mt-4 text-sm"></ul><div class="flex flex-wrap gap-2 mt-4"><button id="dp-go" class="btn btn-primary" type="button">Deploy lewat backend</button><a class="btn" href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Buka Netlify Drop</a></div><p id="dp-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><div id="dp-res" class="hidden flex gap-2 mt-2"><input id="dp-url" class="field" readonly><button id="dp-cp" class="btn" type="button">Salin</button></div><details class="mt-4 text-sm"><summary class="font-semibold cursor-pointer">Panduan deploy instan</summary><pre class="stat mt-2 text-xs" style="white-space:pre-wrap">Cara tercepat (tanpa kode): buka app.netlify.com/drop lalu seret folder atau ZIP berisi index.html. Link .netlify.app langsung jadi.\nLewat tombol Deploy: isi ENDPOINTS.deploy dengan backend Anda.\nRequest : POST multipart/form-data, field "file"\nBalasan : {"url":"https://nama.netlify.app"}\nDi backend, panggil Netlify API (POST /api/v1/sites dengan body ZIP, Content-Type application/zip, header Authorization: Bearer TOKEN). Simpan token hanya di backend.</pre></details>';
+    const $ = s => Util.$(s, root); let file = null;
+    async function take(f) {
+      if (!f) return; file = f; const ul = $('#dp-l'); ul.innerHTML = '';
+      const li = t => { const e = document.createElement('li'); e.className = 'stat'; e.textContent = t; ul.appendChild(e); };
+      if (/\.zip$/i.test(f.name)) {
+        if (!window.JSZip) { li('Library JSZip gagal dimuat, pratinjau ZIP tidak tersedia.'); return; }
+        try { const z = await JSZip.loadAsync(f), names = Object.keys(z.files).filter(n => !z.files[n].dir); li(f.name + ' · ' + names.length + ' file'); names.slice(0, 40).forEach(n => li('📄 ' + n)); if (names.length > 40) li('... dan ' + (names.length - 40) + ' file lain'); if (!names.includes('index.html')) li('⚠ index.html tidak ditemukan di root ZIP. Netlify butuh file ini.'); } catch (e) { li('ZIP tidak bisa dibaca.'); }
+      } else li('📄 ' + f.name + ' · ' + Util.fmt(f.size / 1024, 1) + ' KB' + (f.name !== 'index.html' ? ' (ubah nama jadi index.html sebelum deploy)' : ''));
+    }
+    $('#dp-z').addEventListener('click', () => $('#dp-f').click());
+    $('#dp-z').addEventListener('keydown', e => { if (e.key === 'Enter') $('#dp-f').click(); });
+    $('#dp-f').addEventListener('change', e => take(e.target.files[0]));
+    ['dragover', 'drop'].forEach(ev => $('#dp-z').addEventListener(ev, e => { e.preventDefault(); if (ev === 'drop') take(e.dataTransfer.files[0]); }));
+    $('#dp-go').addEventListener('click', async () => {
+      const st = $('#dp-st'); if (!file) { setSt(st, 'Pilih file HTML atau ZIP dulu.', '#d93a3a'); return; }
+      if (!ENDPOINTS.deploy) { setSt(st, 'Endpoint deploy belum diatur (ENDPOINTS.deploy). Gunakan Netlify Drop sementara.', '#b86b00'); return; }
+      if (!/\.zip$/i.test(file.name)) { setSt(st, 'Endpoint deploy hanya menerima ZIP berisi index.html.', '#d93a3a'); return; }
+      setSt(st, 'Mengunggah...');
+      try { const fd = new FormData(); fd.append('file', file); const r = await fetch(ENDPOINTS.deploy, { method: 'POST', body: fd }), d = await r.json(); if (!r.ok || !/^https?:\/\//.test(d.url || '')) throw 0; $('#dp-url').value = d.url; $('#dp-res').classList.remove('hidden'); setSt(st, 'Deploy selesai.', '#1f8a4c'); } catch (e) { setSt(st, 'Deploy gagal. Periksa endpoint dan CORS.', '#d93a3a'); }
+    });
+    $('#dp-cp').addEventListener('click', () => Util.copy($('#dp-url').value));
+  }
+});
+
+/* ---------- Ryntax Remini ---------- */
+registerTool({
+  id: 'ryntax-remini', name: 'Ryntax Remini', category: 'Creative', badge: 'PREMIUM', description: 'Perjelas dan pertajam foto di browser.', keywords: 'remini perjelas pertajam sharpen upscale foto hd kontras blur',
+  icon: '<path d="M4 7V4h3M17 4h3v3M20 17v3h-3M7 20H4v-3"/><circle cx="12" cy="12" r="3.5"/>',
+  mount(root) {
+    root.innerHTML = '<input id="rm-f" type="file" accept="image/*" class="field">' + fieldGrid([{ id: 'sh', label: 'Ketajaman', attr: 'type="range" min="0" max="10" value="4"' }, { id: 'ct', label: 'Kontras', attr: 'type="range" min="-30" max="60" value="10"' }, { id: 'up', label: 'Perbesar', opts: [['1', '1× (asli)'], ['2', '2×']] }], 'rm-') + '<div class="flex flex-wrap gap-2 mt-3"><button id="rm-go" class="btn btn-primary" type="button">Proses</button><button id="rm-dl" class="btn" type="button">Unduh PNG</button></div><p id="rm-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><div id="rm-cmp" class="relative mt-4 hidden" style="max-width:640px;border:2.5px solid #111"><canvas id="rm-a" style="width:100%;height:auto;display:block"></canvas><canvas id="rm-b" style="width:100%;height:auto;display:block;position:absolute;inset:0;clip-path:inset(0 50% 0 0)"></canvas></div><input id="rm-sl" type="range" min="0" max="100" value="50" class="mt-2 hidden" style="max-width:640px" aria-label="Geser perbandingan"><p class="muted text-xs mt-2">Peningkatan berupa penajaman dan kontras di browser. Hasilnya tidak menambah detail baru seperti AI. Untuk itu butuh layanan AI di backend.</p>';
+    const $ = s => Util.$(s, root); let img = null;
+    $('#rm-f').addEventListener('change', async e => { const f = e.target.files[0]; if (!f) return; try { img = await loadImg(f); setSt($('#rm-st'), 'Gambar siap. Atur slider lalu tekan Proses.'); } catch (er) { setSt($('#rm-st'), er.message, '#d93a3a'); } });
+    $('#rm-go').addEventListener('click', () => {
+      if (!img) { setSt($('#rm-st'), 'Pilih foto dulu.', '#d93a3a'); return; }
+      const up = +$('#rm-up').value, k = Math.min(up, 2400 / Math.max(img.width, img.height)), w = Math.round(img.width * k), h = Math.round(img.height * k), a = $('#rm-a'), b = $('#rm-b');
+      a.width = b.width = w; a.height = b.height = h;
+      const ca = a.getContext('2d'), cb = b.getContext('2d'); ca.imageSmoothingQuality = cb.imageSmoothingQuality = 'high'; ca.drawImage(img, 0, 0, w, h); cb.drawImage(img, 0, 0, w, h);
+      const d = cb.getImageData(0, 0, w, h), s = d.data, o = new Uint8ClampedArray(s), am = +$('#rm-sh').value * 0.12, f = (259 * (+$('#rm-ct').value + 255)) / (255 * (259 - +$('#rm-ct').value));
+      for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) for (let c = 0; c < 3; c++) {
+        const i = (y * w + x) * 4 + c, v = o[i] * (1 + 4 * am) - am * (o[i - 4] + o[i + 4] + o[i - w * 4] + o[i + w * 4]);
+        s[i] = f * (v - 128) + 128;
+      }
+      cb.putImageData(d, 0, 0); $('#rm-cmp').classList.remove('hidden'); $('#rm-sl').classList.remove('hidden'); setSt($('#rm-st'), 'Selesai (' + w + ' × ' + h + ' px). Geser slider untuk membandingkan.', '#1f8a4c');
+    });
+    $('#rm-sl').addEventListener('input', e => { $('#rm-b').style.clipPath = 'inset(0 ' + (100 - e.target.value) + '% 0 0)'; });
+    $('#rm-dl').addEventListener('click', () => { if (!$('#rm-cmp').classList.contains('hidden')) saveCanvas($('#rm-b'), 'foto-tajam.png'); else Util.toast('Proses foto dulu'); });
+  }
+});
+
+/* ---------- Hari Libur ---------- */
+registerTool({
+  id: 'hari-libur', name: 'Hari Libur', category: 'Info', description: 'Hari libur dan peringatan nasional + hitung mundur.', keywords: 'hari libur nasional cuti bersama kalender peringatan tanggal merah',
+  icon: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  mount(root) {
+    const FIXED = [[1, 1, 'Tahun Baru Masehi', 'libur'], [5, 1, 'Hari Buruh Internasional', 'libur'], [6, 1, 'Hari Lahir Pancasila', 'libur'], [8, 17, 'HUT Kemerdekaan RI', 'libur'], [12, 25, 'Hari Raya Natal', 'libur'], [4, 21, 'Hari Kartini', 'peringatan'], [5, 2, 'Hari Pendidikan Nasional', 'peringatan'], [5, 20, 'Hari Kebangkitan Nasional', 'peringatan'], [10, 28, 'Hari Sumpah Pemuda', 'peringatan'], [11, 10, 'Hari Pahlawan', 'peringatan'], [11, 25, 'Hari Guru Nasional', 'peringatan'], [12, 22, 'Hari Ibu', 'peringatan']];
+    const MOVING_2026 = [[1, 16, 'Isra Mi\'raj Nabi Muhammad SAW', 'libur'], [2, 17, 'Tahun Baru Imlek 2577', 'libur'], [3, 19, 'Hari Suci Nyepi (Tahun Baru Saka 1948)', 'libur'], [3, 21, 'Idul Fitri 1447 H', 'libur'], [3, 22, 'Idul Fitri 1447 H', 'libur'], [4, 3, 'Wafat Yesus Kristus', 'libur'], [5, 14, 'Kenaikan Yesus Kristus', 'libur'], [5, 27, 'Idul Adha 1447 H', 'libur'], [5, 31, 'Hari Raya Waisak 2570', 'libur'], [6, 16, 'Tahun Baru Islam 1448 H', 'libur'], [8, 25, 'Maulid Nabi Muhammad SAW', 'libur']];
+    const mk = (y, a) => a.map(e => ({ d: new Date(y, e[0] - 1, e[1]), n: e[2], t: e[3] }));
+    const all = mk(2026, FIXED).concat(mk(2026, MOVING_2026), mk(2027, FIXED.filter(e => e[3] === 'libur'))).sort((a, b) => a.d - b.d);
+    const MON = ['Semua bulan'].concat(['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember']);
+    root.innerHTML = '<div id="hl-next" class="stat mb-4" aria-live="polite"></div>' + ctl({ id: 'm', label: 'Filter bulan', opts: MON.map((m, i) => [i, m]) }, 'hl-') + '<ul id="hl-l" class="grid gap-2 mt-4"></ul><p class="muted text-xs mt-3">Tanggal hari raya yang berpindah tiap tahun (Idul Fitri, Imlek, Waisak, dll.) dan tahun 2027 hanya memuat hari tetap. Cocokkan dengan SKB 3 Menteri terbaru sebelum dipakai resmi. Data mudah diubah di array MOVING_2026.</p>';
+    const $ = s => Util.$(s, root), today = new Date(); today.setHours(0, 0, 0, 0);
+    const nx = all.find(e => e.t === 'libur' && e.d >= today);
+    if (nx) { const n = Math.round((nx.d - today) / 864e5); $('#hl-next').innerHTML = '<span class="muted text-sm">Libur terdekat</span><b class="block text-xl">' + esc(nx.n) + '</b><b class="tabular" style="font-size:1.6rem">' + (n === 0 ? 'Hari ini!' : n + ' hari lagi') + '</b><span class="muted text-sm block">' + nx.d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + '</span>'; } else $('#hl-next').textContent = 'Tidak ada data libur mendatang.';
+    function list() {
+      const m = +$('#hl-m').value;
+      $('#hl-l').innerHTML = all.filter(e => e.d.getFullYear() === 2026 && (!m || e.d.getMonth() + 1 === m)).map(e => '<li class="stat flex justify-between gap-3 items-center' + (e.d < today ? ' muted' : '') + '"><span><b>' + esc(e.n) + '</b><span class="block text-sm muted">' + e.d.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long' }) + '</span></span><span class="badge" style="margin:0">' + (e.t === 'libur' ? 'LIBUR' : 'PERINGATAN') + '</span></li>').join('') || '<li class="muted">Tidak ada data pada bulan ini.</li>';
+    }
+    $('#hl-m').addEventListener('input', list); list();
+  }
+});
+
+/* ---------- Jadwal Sholat ---------- */
+registerTool({
+  id: 'jadwal-sholat', name: 'Jadwal Sholat', category: 'Info', badge: 'TERPOPULER', description: 'Waktu sholat per kota di Indonesia.', keywords: 'jadwal sholat shalat subuh dzuhur ashar maghrib isya kota aladhan waktu',
+  icon: '<path d="M12 3a6 6 0 0 0 0 12 6 6 0 0 1 0-12zM4 21h16M7 21v-3h10v3"/>',
+  mount(root) {
+    const CITIES = ['Jakarta', 'Bandung', 'Surabaya', 'Medan', 'Semarang', 'Yogyakarta', 'Makassar', 'Palembang', 'Denpasar', 'Balikpapan', 'Banjarmasin', 'Pontianak', 'Manado', 'Padang', 'Pekanbaru', 'Batam', 'Bandar Lampung', 'Malang', 'Bogor', 'Bekasi', 'Tangerang', 'Depok', 'Surakarta', 'Samarinda', 'Pontianak', 'Jayapura', 'Ambon', 'Mataram', 'Kupang', 'Banda Aceh', 'Jambi', 'Bengkulu', 'Pangkal Pinang', 'Palu', 'Kendari', 'Gorontalo', 'Cirebon', 'Tasikmalaya', 'Serang', 'Sorong'];
+    root.innerHTML = '<label for="js-c" class="block text-sm font-semibold mb-2">Kota / kabupaten</label><div class="flex gap-2"><input id="js-c" class="field" list="js-dl" value="Jakarta"><datalist id="js-dl">' + CITIES.map(c => '<option value="' + c + '">').join('') + '</datalist><button id="js-go" class="btn btn-primary" type="button">Tampilkan</button></div><p id="js-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><div id="js-out" class="mt-3"></div><p class="muted text-xs mt-3">Sumber: API Aladhan (metode Kemenag RI). Hasil bisa berbeda beberapa menit dari jadwal setempat; ketik nama kota atau kabupaten lain jika tidak ada di daftar.</p>';
+    const $ = s => Util.$(s, root);
+    async function go() {
+      const c = $('#js-c').value.trim(); if (!c) return; setSt($('#js-st'), 'Memuat...'); $('#js-out').innerHTML = '';
+      const n = new Date(), ds = String(n.getDate()).padStart(2, '0') + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + n.getFullYear();
+      try {
+        const r = await fetch('https://api.aladhan.com/v1/timingsByCity/' + ds + '?city=' + encodeURIComponent(c) + '&country=Indonesia&method=20'), d = await r.json();
+        if (!r.ok || !d.data) throw 0; const t = d.data.timings;
+        $('#js-out').innerHTML = rowsHtml({ 'Subuh': t.Fajr, 'Terbit': t.Sunrise, 'Dzuhur': t.Dhuhr, 'Ashar': t.Asr, 'Maghrib': t.Maghrib, 'Isya': t.Isha }); setSt($('#js-st'), c + ' · ' + d.data.date.readable, '#1f8a4c');
+      } catch (e) { setSt($('#js-st'), 'Gagal memuat jadwal. Periksa nama kota dan koneksi internet.', '#d93a3a'); }
+    }
+    $('#js-go').addEventListener('click', go); $('#js-c').addEventListener('keydown', e => { if (e.key === 'Enter') go(); }); go();
+  }
+});
+
+/* ---------- Brat Anime ---------- */
+registerTool({
+  id: 'brat-anime', name: 'Brat Anime', category: 'Creative', description: 'Gambar teks gaya brat dengan bingkai anime.', keywords: 'brat anime teks gambar bingkai chibi manga sakura blur unduh',
+  icon: '<circle cx="12" cy="12" r="9"/><path d="M8 10h.01M16 10h.01M9 15c1.5 1.5 4.5 1.5 6 0"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([{ id: 't', label: 'Teks', area: true, val: 'baka senpai' }, { id: 'bg', label: 'Latar', opts: [['#ffb3d9', 'Pink'], ['#8ACE00', 'Hijau brat'], ['#ffffff', 'Putih'], ['#9ADBFF', 'Biru muda']] }, { id: 'fr', label: 'Bingkai / karakter', opts: [['none', 'Tanpa bingkai'], ['manga', 'Manga'], ['sakura', 'Sakura'], ['chibi', 'Karakter chibi']] }, { id: 'bl', label: 'Blur (0–8)', attr: 'type="range" min="0" max="8" value="1"' }], 'ba-') + '<div class="mt-5 flex justify-center"><canvas id="ba-c" style="width:100%;max-width:340px;height:auto;border:2.5px solid #111"></canvas></div><div class="mt-4 flex justify-center"><button id="ba-dl" class="btn btn-primary" type="button">Unduh PNG</button></div>';
+    const $ = s => Util.$(s, root);
+    function chibi(x, cx, cy, r) {
+      x.fillStyle = '#2b1b3d'; x.beginPath(); x.arc(cx, cy - r * 0.1, r * 1.12, Math.PI, 0); x.fill(); x.fillRect(cx - r * 1.12, cy - r * 0.1, r * 0.3, r * 1.1); x.fillRect(cx + r * 0.82, cy - r * 0.1, r * 0.3, r * 1.1);
+      x.fillStyle = '#ffe0c8'; x.beginPath(); x.arc(cx, cy + r * 0.1, r, 0, 7); x.fill(); x.fillStyle = '#2b1b3d'; x.beginPath(); x.arc(cx, cy - r * 0.35, r * 1.0, Math.PI, 0); x.fill();
+      x.fillStyle = '#1b1b2f'; [-1, 1].forEach(s => { x.beginPath(); x.ellipse(cx + s * r * 0.38, cy + r * 0.15, r * 0.14, r * 0.22, 0, 0, 7); x.fill(); }); x.fillStyle = 'rgba(255,90,140,.5)'; [-1, 1].forEach(s => { x.beginPath(); x.ellipse(cx + s * r * 0.6, cy + r * 0.45, r * 0.16, r * 0.09, 0, 0, 7); x.fill(); });
+      x.strokeStyle = '#7a3b3b'; x.lineWidth = 3; x.beginPath(); x.arc(cx, cy + r * 0.5, r * 0.12, 0.1 * Math.PI, 0.9 * Math.PI); x.stroke();
+    }
+    function draw() {
+      const S = 800, c = $('#ba-c'), x = c.getContext('2d'); c.width = c.height = S; x.fillStyle = $('#ba-bg').value; x.fillRect(0, 0, S, S);
+      const fr = $('#ba-fr').value;
+      if (fr === 'manga') { x.fillStyle = 'rgba(0,0,0,.12)'; for (let i = 0; i < S; i += 20) for (let j = 0; j < S; j += 20) if ((i < 90 || j < 90) || i > S - 110 || j > S - 110) { x.beginPath(); x.arc(i + 10, j + 10, 4, 0, 7); x.fill(); } x.strokeStyle = '#111'; x.lineWidth = 14; x.strokeRect(20, 20, S - 40, S - 40); }
+      if (fr === 'sakura') { x.fillStyle = 'rgba(255,120,170,.65)'; for (let i = 0; i < 26; i++) { x.beginPath(); x.ellipse((i * 211) % S, (i * 137) % S, 16, 9, i, 0, 7); x.fill(); } }
+      const t = ($('#ba-t').value || 'brat').toLowerCase(), pad = 60; let fs = 240, L = [t];
+      for (; fs > 24; fs -= 8) { x.font = 'bold ' + fs + 'px "Arial Narrow",Arial,sans-serif'; L = wrapText(x, t, S - pad * 2); if (L.length * fs * 1.05 <= S - pad * 2 - (fr === 'chibi' ? 170 : 0)) break; }
+      x.fillStyle = '#000'; x.textBaseline = 'top'; x.textAlign = 'left'; if (x.filter !== undefined) x.filter = 'blur(' + $('#ba-bl').value + 'px)';
+      L.forEach((l, i) => x.fillText(l, pad, pad + i * fs * 1.05)); x.filter = 'none'; if (fr === 'chibi') chibi(x, S - 130, S - 130, 80);
+    }
+    Util.$$('input,textarea,select', root).forEach(e => e.addEventListener('input', draw));
+    $('#ba-dl').addEventListener('click', () => saveCanvas($('#ba-c'), 'brat-anime.png')); draw();
+  }
+});
+
+/* ---------- Fake Story ---------- */
+registerTool({
+  id: 'fake-story', name: 'Fake Story', category: 'Creative', description: 'Mockup Instagram Story dengan foto, stiker, musik.', keywords: 'fake story instagram ig mockup foto latar stiker musik username png',
+  icon: '<rect x="6" y="2" width="12" height="20" rx="3"/><circle cx="12" cy="8" r="2"/>',
+  mount(root) {
+    root.innerHTML = fieldGrid([{ id: 'u', label: 'Username', attr: 'value="username"' }, { id: 'm', label: 'Musik', attr: 'value="Nama lagu · Artis"' }, { id: 't', label: 'Teks di story', area: true, val: 'Hari yang indah ✨' }, { id: 's', label: 'Stiker', opts: ['❤️', '🔥', '😂', '📍 Jakarta', '🎂', '⭐'] }, { id: 'bg', label: 'Foto latar', attr: 'type="file" accept="image/*"' }, { id: 'av', label: 'Avatar (opsional)', attr: 'type="file" accept="image/*"' }], 'fs-') + '<div class="mt-5 flex justify-center"><canvas id="fs-c" style="width:100%;max-width:300px;height:auto;border:2.5px solid #111"></canvas></div><div class="mt-4 flex justify-center"><button id="fs-dl" class="btn btn-primary" type="button">Unduh PNG</button></div><p class="muted text-xs mt-3 text-center">Mockup untuk konten kreatif. Jangan dipakai untuk menyamar sebagai orang lain.</p>';
+    const $ = s => Util.$(s, root); let bg = null, av = null;
+    function draw() {
+      const c = $('#fs-c'), x = c.getContext('2d'), W = 540, H = 960; c.width = W; c.height = H;
+      if (bg) { const k = Math.max(W / bg.width, H / bg.height); x.drawImage(bg, (W - bg.width * k) / 2, (H - bg.height * k) / 2, bg.width * k, bg.height * k); } else { const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#feda75'); g.addColorStop(0.5, '#d62976'); g.addColorStop(1, '#4f5bd5'); x.fillStyle = g; x.fillRect(0, 0, W, H); }
+      const sh = x.createLinearGradient(0, 0, 0, 200); sh.addColorStop(0, 'rgba(0,0,0,.5)'); sh.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = sh; x.fillRect(0, 0, W, 200);
+      x.fillStyle = 'rgba(255,255,255,.4)'; roundRect(x, 20, 24, W - 40, 5, 3); x.fill(); x.fillStyle = '#fff'; roundRect(x, 20, 24, (W - 40) * 0.35, 5, 3); x.fill();
+      const un = $('#fs-u').value.trim() || 'username'; x.save(); x.beginPath(); x.arc(56, 80, 26, 0, 7); x.clip(); if (av) x.drawImage(av, 30, 54, 52, 52); else { x.fillStyle = '#8e8e93'; x.fillRect(30, 54, 52, 52); x.fillStyle = '#fff'; x.font = 'bold 26px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(un.charAt(0).toUpperCase(), 56, 82); } x.restore();
+      x.textAlign = 'left'; x.textBaseline = 'middle'; x.fillStyle = '#fff'; x.font = 'bold 24px Arial'; x.fillText(un, 98, 74); x.font = '20px Arial'; x.fillStyle = 'rgba(255,255,255,.8)'; x.fillText('2 j', 98, 102); x.font = 'bold 36px Arial'; x.fillStyle = '#fff'; x.fillText('✕', W - 56, 80);
+      x.font = 'bold 38px Arial'; const L = wrapText(x, $('#fs-t').value || ' ', W - 160), bh = L.length * 50 + 30; x.fillStyle = 'rgba(0,0,0,.45)'; roundRect(x, 50, H / 2 - bh / 2, W - 100, bh, 20); x.fill(); x.fillStyle = '#fff'; x.textAlign = 'center'; L.forEach((l, i) => x.fillText(l, W / 2, H / 2 - bh / 2 + 40 + i * 50));
+      x.font = '90px Arial'; x.fillText($('#fs-s').value, W - 110, H / 2 + 220);
+      x.fillStyle = 'rgba(0,0,0,.5)'; roundRect(x, 40, H - 220, W - 80, 56, 28); x.fill(); x.fillStyle = '#fff'; x.font = '22px Arial'; x.textAlign = 'left'; x.fillText('♪ ' + $('#fs-m').value, 66, H - 192);
+      x.strokeStyle = '#fff'; x.lineWidth = 2.5; roundRect(x, 30, H - 120, W - 160, 60, 30); x.stroke(); x.font = '22px Arial'; x.fillText('Kirim pesan', 56, H - 90); x.font = '40px Arial'; x.fillText('♡ ➤', W - 110, H - 88);
+    }
+    const pickImg = (id, set) => e => { const f = e.target.files[0]; if (!f) { set(null); draw(); return; } loadImg(f).then(i => { set(i); draw(); }); };
+    Util.$$('input,textarea,select', root).forEach(e => { if (e.type !== 'file') e.addEventListener('input', draw); });
+    $('#fs-bg').addEventListener('change', pickImg('bg', i => { bg = i; })); $('#fs-av').addEventListener('change', pickImg('av', i => { av = i; }));
+    $('#fs-dl').addEventListener('click', () => saveCanvas($('#fs-c'), 'fake-story.png')); draw();
+  }
+});
+
+/* ---------- Cek Banned WhatsApp ---------- */
+registerTool({
+  id: 'cek-wa', name: 'Cek Banned WhatsApp', category: 'Info', description: 'Periksa format nomor dan buka tautan wa.me.', keywords: 'cek banned whatsapp wa nomor blokir terblokir wa.me format telepon',
+  icon: '<path d="M21 12a8 8 0 0 1-11.7 7L4 21l2-5.2A8 8 0 1 1 21 12z"/><path d="M9 9c0 3 3 6 6 6l1-2-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2z"/>',
+  mount(root) {
+    root.innerHTML = ctl({ id: 'n', label: 'Nomor telepon', ph: '0812 3456 7890 atau +62 812 3456 7890', attr: 'inputmode="tel"' }, 'wa-') + '<div class="flex flex-wrap gap-2 mt-4"><button id="wa-go" class="btn btn-primary" type="button">Periksa format</button><button id="wa-open" class="btn" type="button">Buka wa.me</button><button id="wa-api" class="btn" type="button">Cek via backend</button></div><div id="wa-out" class="mt-4" aria-live="polite"></div><p class="muted text-xs mt-3">WhatsApp tidak menyediakan API publik untuk mengecek akun terblokir, jadi browser tidak bisa memastikan status banned. Yang bisa dilakukan: memvalidasi format, dan membuka wa.me untuk melihat apakah nomor terdaftar. Untuk pengecekan lanjutan isi ENDPOINTS.wacheck (POST JSON {"number":"62..."}, balasan {"status":"..."}) dengan layanan resmi yang Anda punya izinnya.</p>';
+    const $ = s => Util.$(s, root); let num = '';
+    function norm() { let d = $('#wa-n').value.replace(/[^\d+]/g, ''); if (d.startsWith('+')) d = d.slice(1); else if (d.startsWith('0')) d = '62' + d.slice(1); else if (d.startsWith('8')) d = '62' + d; return d.replace(/\D/g, ''); }
+    function check() {
+      num = norm(); const out = $('#wa-out');
+      if (!num) { out.innerHTML = '<span style="color:#d93a3a">Masukkan nomor telepon.</span>'; return false; }
+      const ok = /^[1-9]\d{7,14}$/.test(num), idOk = !num.startsWith('62') || /^62 ?8\d{8,11}$/.test(num);
+      out.innerHTML = rowsHtml({ 'Format internasional': '+' + num, 'Panjang digit': num.length, 'Format valid (E.164)': ok ? 'Ya' : 'Tidak', 'Pola seluler Indonesia': num.startsWith('62') ? (idOk ? 'Sesuai' : 'Tidak sesuai') : 'Bukan nomor +62', 'Tautan': 'https://wa.me/' + num });
+      return ok;
+    }
+    $('#wa-go').addEventListener('click', check);
+    $('#wa-open').addEventListener('click', () => { if (check()) window.open('https://wa.me/' + num, '_blank', 'noopener,noreferrer'); else Util.toast('Format nomor belum valid'); });
+    $('#wa-api').addEventListener('click', async () => {
+      if (!check()) return; if (!ENDPOINTS.wacheck) { Util.toast('Backend belum diatur (ENDPOINTS.wacheck)'); return; }
+      try { const r = await fetch(ENDPOINTS.wacheck, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ number: num }) }), d = await r.json(); $('#wa-out').insertAdjacentHTML('beforeend', '<p class="stat mt-3 font-bold">Status dari backend: ' + esc(d.status || '-') + '</p>'); } catch (e) { Util.toast('Backend gagal dihubungi'); }
+    });
+  }
+});
+
+/* ---------- Asah Otak ---------- */
+registerTool({
+  id: 'asah-otak', name: 'Asah Otak', category: 'Games', description: 'Teka-teki acak dengan skor dan petunjuk.', keywords: 'asah otak teka teki tebakan kuis game soal jawaban hint',
+  icon: '<path d="M9 4a3 3 0 0 0-3 3 3 3 0 0 0-2 5 3 3 0 0 0 3 4 3 3 0 0 0 5 1V5a2 2 0 0 0-3-1zM15 4a3 3 0 0 1 3 3 3 3 0 0 1 2 5 3 3 0 0 1-3 4 3 3 0 0 1-5 1"/>',
+  mount(root) {
+    const Q = [['Apa yang makin diambil makin besar?', 'lubang', 'Ada di tanah.'], ['Hewan apa yang tidak punya kaki tapi bisa berjalan di dinding?', 'cicak', 'Sering ada di rumah.'], ['Apa yang punya leher tapi tak punya kepala?', 'botol', 'Tempat minum.'], ['Apa yang basah saat mengeringkan?', 'handuk', 'Dipakai setelah mandi.'], ['Berapa jumlah bulan yang punya 28 hari?', '12', 'Semua bulan.'], ['Apa yang punya kunci tapi tak bisa membuka pintu?', 'piano', 'Alat musik.'], ['Semakin banyak kamu berbagi, semakin sedikit kamu punya. Apa itu?', 'kue', 'Bisa dimakan.'], ['Apa yang naik tapi tak pernah turun?', 'umur', 'Bertambah tiap tahun.'], ['Apa yang selalu ada di depan tapi tak terlihat?', 'masa depan', 'Soal waktu.'], ['Aku punya tangan tapi tak bisa menggenggam. Apa aku?', 'jam', 'Menunjukkan waktu.']];
+    root.innerHTML = '<div class="flex justify-between font-bold mb-3"><span>Skor: <span id="ao-s" class="tabular">0</span></span><span>Soal: <span id="ao-n" class="tabular">1</span></span></div><div class="stat font-bold" id="ao-q" style="font-size:1.1rem"></div><div class="flex gap-2 mt-3"><input id="ao-a" class="field" placeholder="Jawabanmu" autocomplete="off"><button id="ao-ok" class="btn btn-primary" type="button">Jawab</button></div><div class="flex gap-2 mt-3"><button id="ao-h" class="btn" type="button">Petunjuk (−5)</button><button id="ao-nx" class="btn" type="button">Soal berikutnya</button></div><p id="ao-m" class="font-semibold mt-3" aria-live="polite"></p>';
+    const $ = s => Util.$(s, root); let order = [], idx = -1, score = 0, n = 0, done = false;
+    const next = () => { if (!order.length) order = Q.map((_, i) => i).sort(() => Math.random() - 0.5); idx = order.pop(); n++; done = false; $('#ao-q').textContent = Q[idx][0]; $('#ao-a').value = ''; $('#ao-m').textContent = ''; $('#ao-n').textContent = n; $('#ao-a').focus(); };
+    const ans = () => { if (done) return; const a = $('#ao-a').value.trim().toLowerCase(); if (!a) return; if (a === Q[idx][1]) { score += 10; done = true; setSt($('#ao-m'), 'Benar! +10 poin.', '#1f8a4c'); } else setSt($('#ao-m'), 'Belum tepat, coba lagi.', '#d93a3a'); $('#ao-s').textContent = score; };
+    $('#ao-ok').addEventListener('click', ans); $('#ao-a').addEventListener('keydown', e => { if (e.key === 'Enter') ans(); });
+    $('#ao-h').addEventListener('click', () => { if (done) return; score = Math.max(0, score - 5); $('#ao-s').textContent = score; setSt($('#ao-m'), 'Petunjuk: ' + Q[idx][2]); });
+    $('#ao-nx').addEventListener('click', () => { if (!done) setSt($('#ao-m'), 'Jawaban: ' + Q[idx][1] + '. Memuat soal berikutnya...'); setTimeout(next, done ? 0 : 900); }); next();
+  }
+});
+
+/* ---------- Tebak Gambar ---------- */
+registerTool({
+  id: 'tebak-gambar', name: 'Tebak Gambar', category: 'Games', description: 'Tebak kata dari susunan emoji. Ada nyawa dan skor.', keywords: 'tebak gambar emoji kata game nyawa skor kuis',
+  icon: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m21 15-5-5L5 21"/>',
+  mount(root) {
+    const P = [['🍚🍳', 'nasi goreng'], ['🌻☀️', 'bunga matahari'], ['🚿🌧️', 'hujan'], ['👑🦁', 'raja hutan|singa'], ['📚🏫', 'sekolah'], ['✈️🏝️', 'liburan|pulau'], ['🥛🐄', 'susu sapi|susu'], ['🌙🌃', 'malam'], ['🔑🏠', 'kunci rumah|kunci'], ['🍌🐒', 'monyet|pisang'], ['⚽🥅', 'gol|sepak bola'], ['🔥🐔', 'ayam bakar|ayam geprek']];
+    root.innerHTML = '<div class="flex justify-between font-bold mb-3"><span>Skor: <span id="tg-s" class="tabular">0</span></span><span id="tg-l" aria-label="Nyawa"></span></div><div class="stat text-center" id="tg-e" style="font-size:4rem"></div><div class="flex gap-2 mt-3"><input id="tg-a" class="field" placeholder="Tebakanmu" autocomplete="off"><button id="tg-ok" class="btn btn-primary" type="button">Tebak</button></div><div class="flex gap-2 mt-3"><button id="tg-nx" class="btn" type="button">Lewati</button><button id="tg-rs" class="btn" type="button">Main ulang</button></div><p id="tg-m" class="font-semibold mt-3" aria-live="polite"></p>';
+    const $ = s => Util.$(s, root); let order = [], cur, score, lives;
+    const heart = () => { $('#tg-l').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives); $('#tg-s').textContent = score; };
+    function next() { if (lives <= 0) return; if (!order.length) order = P.map((_, i) => i).sort(() => Math.random() - 0.5); cur = P[order.pop()]; $('#tg-e').textContent = cur[0]; $('#tg-a').value = ''; $('#tg-a').focus(); }
+    function guess() {
+      if (lives <= 0) return; const a = $('#tg-a').value.trim().toLowerCase(); if (!a) return;
+      if (cur[1].split('|').includes(a)) { score += 10; setSt($('#tg-m'), 'Benar! +10 poin.', '#1f8a4c'); heart(); next(); }
+      else { lives--; heart(); if (lives <= 0) { setSt($('#tg-m'), 'Game over! Skor akhir: ' + score + '. Jawaban terakhir: ' + cur[1].split('|')[0], '#d93a3a'); } else setSt($('#tg-m'), 'Salah, nyawa berkurang.', '#d93a3a'); }
+    }
+    const reset = () => { score = 0; lives = 3; order = []; $('#tg-m').textContent = ''; heart(); next(); };
+    $('#tg-ok').addEventListener('click', guess); $('#tg-a').addEventListener('keydown', e => { if (e.key === 'Enter') guess(); });
+    $('#tg-nx').addEventListener('click', () => { if (lives > 0) { lives--; heart(); setSt($('#tg-m'), 'Dilewati. Jawaban: ' + cur[1].split('|')[0]); if (lives > 0) next(); } });
+    $('#tg-rs').addEventListener('click', reset); reset();
+  }
+});
+
+/* ---------- Pabrik tool pencarian (hasil berupa kartu) ----------
+   Kontrak endpoint: GET {endpoint}?q=kata  →  [{"title","desc","thumb","url"}] atau {"results":[...]} */
+function searchTool(c) {
+  registerTool({
+    id: c.id, name: c.name, category: 'Media', badge: c.badge, description: c.description, keywords: c.keywords, icon: c.icon,
+    mount(root) {
+      root.innerHTML = '<div class="flex gap-2"><input id="sr-q" class="field" placeholder="' + c.ph + '" autocomplete="off"><button id="sr-go" class="btn btn-primary" type="button">Cari</button></div><div id="sr-h" class="flex flex-wrap gap-2 mt-3"></div><p id="sr-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><div id="sr-out" class="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-3"></div><details class="mt-4 text-sm"><summary class="font-semibold cursor-pointer">Cara menghubungkan endpoint</summary><pre class="stat mt-2 text-xs" style="white-space:pre-wrap">Isi ENDPOINTS.' + c.key + ' dengan URL backend/scraper milik Anda.\nRequest : GET {endpoint}?q=kata_kunci\nBalasan : [{"title":"...","desc":"...","thumb":"https://...","url":"https://..."}]\nBackend harus mengizinkan CORS. Patuhi aturan layanan sumber dan hak cipta.</pre></details>';
+      const $ = s => Util.$(s, root), HK = 'alltools-sr-' + c.id; let hist = store.get(HK, []);
+      const COLS = ['#FFE14D', '#FF8AD1', '#9ADBFF', '#A8F0C6', '#ffffff'];
+      function drawHist() { $('#sr-h').innerHTML = hist.map(h => '<button type="button" class="chip" data-h="' + esc(h) + '">' + esc(h) + '</button>').join(''); Util.$$('[data-h]', root).forEach(b => b.addEventListener('click', () => { $('#sr-q').value = b.dataset.h; run(); })); }
+      function cards(items) {
+        $('#sr-out').innerHTML = items.length ? items.map((it, i) => '<div class="stat" style="padding:.5rem">' + (/^https?:\/\//.test(it.thumb || '') ? '<img src="' + esc(it.thumb) + '" alt="" loading="lazy" referrerpolicy="no-referrer" style="width:100%;aspect-ratio:4/3;object-fit:cover;border:2px solid #111">' : '<div style="aspect-ratio:4/3;background:' + COLS[i % 5] + ';border:2px solid #111;display:flex;align-items:center;justify-content:center;font-size:2rem;color:#111">' + c.emoji + '</div>') + '<b class="block text-sm mt-2 leading-tight">' + esc(it.title || '-') + '</b>' + (it.desc ? '<span class="muted text-xs block">' + esc(it.desc) + '</span>' : '') + (it.ing ? '<details class="text-xs mt-1"><summary class="font-bold cursor-pointer">Bahan &amp; langkah</summary><b>Bahan:</b> ' + esc(it.ing.join(', ')) + '<ol class="list-decimal pl-4 mt-1">' + it.steps.map(s => '<li>' + esc(s) + '</li>').join('') + '</ol></details>' : '') + (/^https?:\/\//.test(it.url || '') ? '<a class="btn mt-2 inline-block" style="padding:.2rem .6rem" href="' + esc(it.url) + '" target="_blank" rel="noopener noreferrer">Buka</a>' : '') + '</div>').join('') : '';
+      }
+      async function run() {
+        const q = $('#sr-q').value.trim(), st = $('#sr-st'), ep = ENDPOINTS[c.key];
+        if (!q && !c.local) { setSt(st, 'Masukkan kata kunci.', '#d93a3a'); return; }
+        if (q) { hist = [q].concat(hist.filter(h => h !== q)).slice(0, 8); store.set(HK, hist); drawHist(); }
+        if (ep) {
+          setSt(st, 'Mencari...');
+          try { const r = await fetch(ep + (ep.includes('?') ? '&' : '?') + 'q=' + encodeURIComponent(q)); if (!r.ok) throw 0; const d = await r.json(), items = Array.isArray(d) ? d : (d.results || []); cards(items); setSt(st, items.length + ' hasil.', '#1f8a4c'); }
+          catch (e) { cards([]); setSt(st, 'Gagal mengambil data. Periksa endpoint dan CORS.', '#d93a3a'); }
+        } else if (c.local) { const items = c.local.filter(i => (i.title + ' ' + i.desc).toLowerCase().includes(q.toLowerCase())); cards(items); setSt(st, items.length + ' hasil (data lokal contoh)' + (c.key ? '. Isi ENDPOINTS.' + c.key + ' untuk data asli.' : ''), '#b86b00'); }
+        else { cards([]); setSt(st, 'Endpoint belum diatur (mode placeholder). Isi ENDPOINTS.' + c.key + ' di kode.', '#b86b00'); }
+      }
+      $('#sr-go').addEventListener('click', run); $('#sr-q').addEventListener('keydown', e => { if (e.key === 'Enter') run(); });
+      drawHist(); if (c.local) run();
+    }
+  });
+}
+searchTool({ id: 'alight-preset', key: 'preset', name: 'Cari Preset Alight Motion', description: 'Cari preset XML/link AM dari link TikTok atau kata kunci.', keywords: 'alight motion preset xml am tiktok link cari editor video', ph: 'Tempel link TikTok atau kata kunci preset', emoji: '🎞️', icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/>' });
+searchTool({ id: 'ryntax-bilibili', key: 'bilibili', name: 'Ryntax Bilibili', description: 'Cari video Bilibili.', keywords: 'bilibili video anime cari tonton', ph: 'Cari video Bilibili', emoji: '📺', icon: '<rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 3l3 4M16 3l-3 4M9 12v2M15 12v2"/>' });
+searchTool({ id: 'ryntax-pinterest', key: 'pinterest', name: 'Ryntax Pinterest', description: 'Cari gambar dan video inspirasi.', keywords: 'pinterest gambar video inspirasi cari foto pin', ph: 'Cari gambar atau video', emoji: '📌', icon: '<circle cx="12" cy="12" r="9"/><path d="M12 8v8M10 17l-1 4"/>' });
+searchTool({
+  id: 'ryntax-resep', key: 'resep', name: 'Ryntax Resep Koki', badge: 'TERPOPULER', description: 'Cari resep masakan. Ada data lokal untuk dicoba.', keywords: 'resep masakan koki memasak makanan bahan langkah dapur', ph: 'Cari resep, mis. nasi, telur, mie', emoji: '🍳', icon: '<path d="M6 13h12v3a4 4 0 0 1-4 4h-4a4 4 0 0 1-4-4zM9 4c-1 1 1 2 0 3M13 4c-1 1 1 2 0 3"/>',
+  local: [
+    { title: 'Nasi Goreng Sederhana', desc: 'Nasi goreng bumbu dasar, siap 10 menit.', ing: ['2 piring nasi', '2 siung bawang putih', '3 siung bawang merah', '2 sdm kecap manis', '1 butir telur', 'garam & kaldu'], steps: ['Haluskan bawang, tumis hingga harum.', 'Masukkan telur, orak-arik.', 'Tambahkan nasi, kecap, garam, dan kaldu.', 'Aduk rata hingga panas, sajikan.'] },
+    { title: 'Telur Dadar Padat', desc: 'Telur dadar tebal ala warung.', ing: ['3 butir telur', '1 batang daun bawang', '1 sdm tepung terigu', 'garam, merica'], steps: ['Kocok telur dengan semua bahan.', 'Panaskan minyak, tuang adonan.', 'Masak api kecil, balik, angkat saat kecokelatan.'] },
+    { title: 'Mie Goreng Jawa', desc: 'Mie goreng manis gurih.', ing: ['2 bungkus mie telur', '1 butir telur', 'sawi hijau', '3 sdm kecap manis', 'bawang putih & merah'], steps: ['Rebus mie setengah matang, tiriskan.', 'Tumis bumbu halus, masukkan telur.', 'Masukkan mie, sawi, dan kecap.', 'Aduk hingga matang merata.'] },
+    { title: 'Sayur Sop Hangat', desc: 'Kuah bening segar dengan sayuran.', ing: ['wortel', 'kentang', 'kol', 'seledri', 'bawang putih', 'garam, merica'], steps: ['Didihkan air dengan bawang putih geprek.', 'Masukkan wortel dan kentang hingga empuk.', 'Tambahkan kol, garam, merica.', 'Taburi seledri sebelum disajikan.'] },
+    { title: 'Tempe Orek Kecap', desc: 'Lauk manis pedas tahan lama.', ing: ['200 g tempe', '3 sdm kecap manis', 'cabai', 'bawang merah & putih', 'gula, garam'], steps: ['Potong tempe dadu, goreng setengah kering.', 'Tumis bumbu iris hingga harum.', 'Masukkan tempe, kecap, gula, garam.', 'Aduk hingga bumbu meresap.'] },
+    { title: 'Es Teh Manis Segar', desc: 'Minuman klasik untuk cuaca panas.', ing: ['2 kantong teh', '500 ml air panas', '3 sdm gula', 'es batu'], steps: ['Seduh teh dengan air panas 3 menit.', 'Larutkan gula ke dalam teh.', 'Tuang ke gelas berisi es batu.'] }
+  ]
+});
+
+/* ---------- Cek NPSN Sekolah ---------- */
+registerTool({
+  id: 'cek-npsn', name: 'Cek NPSN Sekolah', category: 'Info', description: 'Cari data sekolah dari 8 digit NPSN.', keywords: 'npsn sekolah kemendikbud dapodik data sekolah cari kode',
+  icon: '<path d="M3 10 12 4l9 6M5 10v9M19 10v9M9 19v-6h6v6M3 19h18"/>',
+  mount(root) {
+    root.innerHTML = ctl({ id: 'n', label: 'NPSN (8 digit)', attr: 'inputmode="numeric" maxlength="8" autocomplete="off"', ph: '20100001' }, 'np-') + '<div class="flex flex-wrap gap-2 mt-4"><button id="np-go" class="btn btn-primary" type="button">Cari data</button><button id="np-web" class="btn" type="button">Buka pencarian resmi</button></div><div id="np-out" class="mt-4" aria-live="polite"></div><p class="muted text-xs mt-3">Validasi hanya memeriksa format 8 digit angka. Data sekolah diambil dari endpoint Anda (ENDPOINTS.npsn): GET {endpoint}?npsn=XXXXXXXX, balasan objek JSON, mis. {"nama":"...","alamat":"..."}. Tombol pencarian resmi membuka situs Kemendikdasmen; alamat situs dapat berubah.</p>';
+    const $ = s => Util.$(s, root), inp = $('#np-n');
+    inp.addEventListener('input', () => { inp.value = inp.value.replace(/\D/g, ''); });
+    const valid = () => { if (!/^\d{8}$/.test(inp.value)) { $('#np-out').innerHTML = '<span style="color:#d93a3a">NPSN harus 8 digit angka (' + inp.value.length + '/8).</span>'; return false; } return true; };
+    $('#np-go').addEventListener('click', async () => {
+      if (!valid()) return; const out = $('#np-out');
+      if (!ENDPOINTS.npsn) { out.innerHTML = '<span style="color:#b86b00">Format valid. Endpoint data belum diatur (ENDPOINTS.npsn), gunakan tombol pencarian resmi.</span>'; return; }
+      out.innerHTML = '<span class="muted">Mencari...</span>';
+      try { const r = await fetch(ENDPOINTS.npsn + (ENDPOINTS.npsn.includes('?') ? '&' : '?') + 'npsn=' + inp.value); if (!r.ok) throw 0; const d = await r.json(); out.innerHTML = rowsHtml(d.data || d); } catch (e) { out.innerHTML = '<span style="color:#d93a3a">Data tidak ditemukan atau endpoint gagal dihubungi.</span>'; }
+    });
+    $('#np-web').addEventListener('click', () => { if (valid()) window.open('https://referensi.data.kemendikdasmen.go.id/pendidikan/npsn/' + inp.value, '_blank', 'noopener,noreferrer'); });
+  }
+});
+
+/* ---------- Ryntax Drama ---------- */
+registerTool({
+  id: 'ryntax-drama', name: 'Ryntax Drama', category: 'Media', badge: 'TERPOPULER', description: 'Katalog dan pemutar drama pendek vertikal.', keywords: 'drama pendek vertikal episode tonton series film katalog',
+  icon: '<rect x="6" y="2" width="12" height="20" rx="2"/><path d="m10 8 5 3-5 3zM9 18h6"/>',
+  mount(root) {
+    let cat = [{ t: 'Cinta di Balik Hujan', g: 'Romantis', eps: [{ n: 'Episode 1', src: '' }, { n: 'Episode 2', src: '' }, { n: 'Episode 3', src: '' }] }, { t: 'CEO Pura-Pura Miskin', g: 'Komedi', eps: [{ n: 'Episode 1', src: '' }, { n: 'Episode 2', src: '' }] }, { t: 'Rahasia Kos Lantai 3', g: 'Misteri', eps: [{ n: 'Episode 1', src: '' }, { n: 'Episode 2', src: '' }, { n: 'Episode 3', src: '' }, { n: 'Episode 4', src: '' }] }, { t: 'Dua Dunia', g: 'Fantasi', eps: [{ n: 'Episode 1', src: '' }] }];
+    root.innerHTML = '<div id="dr-cat" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div><div id="dr-pl" class="hidden mt-5"><button id="dr-back" class="btn mb-3" type="button">← Katalog</button><div class="grid sm:grid-cols-2 gap-4"><div><video id="dr-v" controls playsinline style="width:100%;max-width:300px;aspect-ratio:9/16;background:#111;border:2.5px solid #111"></video><p id="dr-m" class="text-sm font-semibold mt-2"></p></div><div><h3 id="dr-t" class="font-extrabold text-lg mb-2"></h3><div id="dr-eps" class="grid gap-2"></div></div></div></div><p class="muted text-xs mt-3">Data contoh tanpa video. Isi ENDPOINTS.drama dengan JSON [{"t":"judul","g":"genre","eps":[{"n":"Episode 1","src":"https://...mp4"}]}] dari sumber yang Anda punya hak tayangnya.</p>';
+    const $ = s => Util.$(s, root), COL = ['#FFE14D', '#FF8AD1', '#9ADBFF', '#A8F0C6'];
+    function show() { $('#dr-cat').innerHTML = cat.map((d, i) => '<button type="button" class="stat text-left" data-d="' + i + '" style="padding:.5rem;cursor:pointer"><div style="aspect-ratio:9/12;background:' + COL[i % 4] + ';border:2px solid #111;display:flex;align-items:center;justify-content:center;font-size:2.2rem;color:#111">🎬</div><b class="block text-sm mt-2 leading-tight">' + esc(d.t) + '</b><span class="muted text-xs">' + esc(d.g || '') + ' · ' + d.eps.length + ' eps</span></button>').join(''); Util.$$('[data-d]', root).forEach(b => b.addEventListener('click', () => open(+b.dataset.d))); }
+    function ep(d, j) { const e = d.eps[j], v = $('#dr-v'); Util.$$('[data-e]', root).forEach(b => b.classList.toggle('active', +b.dataset.e === j)); if (/^https?:\/\//.test(e.src || '')) { v.src = e.src; v.play().catch(() => {}); setSt($('#dr-m'), 'Memutar ' + e.n); } else { v.removeAttribute('src'); v.load(); setSt($('#dr-m'), e.n + ': belum ada sumber video (data contoh).', '#b86b00'); } }
+    function open(i) { const d = cat[i]; $('#dr-cat').classList.add('hidden'); $('#dr-pl').classList.remove('hidden'); $('#dr-t').textContent = d.t; $('#dr-eps').innerHTML = d.eps.map((e, j) => '<button type="button" class="btn text-left" data-e="' + j + '">' + esc(e.n) + '</button>').join(''); Util.$$('[data-e]', root).forEach(b => b.addEventListener('click', () => ep(d, +b.dataset.e))); ep(d, 0); }
+    $('#dr-back').addEventListener('click', () => { $('#dr-v').pause(); $('#dr-pl').classList.add('hidden'); $('#dr-cat').classList.remove('hidden'); });
+    show();
+    if (ENDPOINTS.drama) fetch(ENDPOINTS.drama).then(r => r.json()).then(d => { if (Array.isArray(d) && d.length) { cat = d; show(); } }).catch(() => {});
+  }
+});
+
+/* ---------- Email Sementara ---------- */
+registerTool({
+  id: 'email-sementara', name: 'Email Sementara', category: 'Utilities', description: 'Email sekali pakai dengan inbox otomatis.', keywords: 'email sementara temp mail sekali pakai disposable inbox otp spam',
+  icon: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6M16 3l3 3"/>',
+  mount(root) {
+    root.innerHTML = '<div class="flex gap-2"><input id="tm-a" class="field" readonly placeholder="Klik Buat email baru"><button id="tm-cp" class="btn" type="button">Salin</button></div><div class="flex flex-wrap gap-2 mt-3"><button id="tm-new" class="btn btn-primary" type="button">Buat email baru</button><button id="tm-rf" class="btn" type="button">Segarkan inbox</button></div><p id="tm-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><ul id="tm-l" class="grid gap-2 mt-3"></ul><pre id="tm-body" class="stat mt-3 text-sm hidden" style="white-space:pre-wrap;overflow:auto;max-height:18rem"></pre><p class="muted text-xs mt-3">Memakai layanan publik mail.tm. Jangan dipakai untuk akun penting; pesan bisa dihapus kapan saja dan inbox tidak privat.</p>';
+    const $ = s => Util.$(s, root), API = 'https://api.mail.tm'; let tok = '', timer = null;
+    const jf = async (p, o, t) => { const r = await fetch(API + p, Object.assign({ headers: Object.assign({ 'Content-Type': 'application/json' }, t ? { Authorization: 'Bearer ' + t } : {}) }, o)); if (!r.ok) throw new Error(r.status); return r.json(); };
+    const rnd = n => { const a = new Uint8Array(n); crypto.getRandomValues(a); return Array.from(a, b => 'abcdefghijkmnpqrstuvwxyz23456789'[b % 32]).join(''); };
+    async function inbox() {
+      if (!tok) return;
+      if (!root.isConnected) { clearInterval(timer); return; }
+      try {
+        const m = (await jf('/messages', {}, tok))['hydra:member'] || [];
+        $('#tm-l').innerHTML = m.length ? '' : '<li class="muted text-sm">Inbox kosong. Menunggu pesan (cek otomatis tiap 10 detik)...</li>';
+        m.forEach(x => { const li = document.createElement('li'); li.className = 'stat'; li.style.cursor = 'pointer'; const b = document.createElement('b'); b.textContent = x.subject || '(tanpa subjek)'; const s = document.createElement('span'); s.className = 'muted text-sm block'; s.textContent = (x.from && x.from.address || '') + ' · ' + (x.intro || ''); li.appendChild(b); li.appendChild(s); li.addEventListener('click', async () => { try { const d = await jf('/messages/' + x.id, {}, tok); $('#tm-body').textContent = d.text || '(isi kosong)'; $('#tm-body').classList.remove('hidden'); } catch (e) { Util.toast('Gagal membuka pesan'); } }); $('#tm-l').appendChild(li); });
+      } catch (e) { setSt($('#tm-st'), 'Gagal memuat inbox.', '#d93a3a'); }
+    }
+    $('#tm-new').addEventListener('click', async () => {
+      setSt($('#tm-st'), 'Membuat email...'); clearInterval(timer); $('#tm-l').innerHTML = ''; $('#tm-body').classList.add('hidden');
+      try {
+        const dom = (await jf('/domains'))['hydra:member'][0].domain, addr = 'tmp' + rnd(8) + '@' + dom, pw = rnd(14);
+        await jf('/accounts', { method: 'POST', body: JSON.stringify({ address: addr, password: pw }) });
+        tok = (await jf('/token', { method: 'POST', body: JSON.stringify({ address: addr, password: pw }) })).token;
+        $('#tm-a').value = addr; setSt($('#tm-st'), 'Email siap dipakai.', '#1f8a4c'); inbox(); timer = setInterval(inbox, 10000);
+      } catch (e) { tok = ''; setSt($('#tm-st'), 'Gagal membuat email. Layanan publik sedang sibuk atau diblokir, coba lagi nanti.', '#d93a3a'); }
+    });
+    $('#tm-rf').addEventListener('click', inbox); $('#tm-cp').addEventListener('click', () => Util.copy($('#tm-a').value));
+  }
+});
+
+/* ---------- Al-Qur'an ---------- */
+registerTool({
+  id: 'al-quran', name: "Al-Qur'an", category: 'Info', description: 'Baca surah dan ayat dengan terjemahan Indonesia.', keywords: 'quran alquran al qur an surah ayat terjemahan baca islami mengaji',
+  icon: '<path d="M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4zM20 4h-6M20 4v14h-6"/>',
+  mount(root) {
+    root.innerHTML = '<div class="grid sm:grid-cols-2 gap-3"><div><label for="qn-f" class="block text-sm font-semibold mb-2">Cari surah</label><input id="qn-f" class="field" placeholder="mis. Yasin, Al-Kahf, 36"></div><div><label for="qn-s" class="block text-sm font-semibold mb-2">Pilih surah</label><select id="qn-s" class="field"></select></div></div><p id="qn-st" class="text-sm mt-3 font-semibold" aria-live="polite"></p><div id="qn-out" class="grid gap-3 mt-3"></div><p class="muted text-xs mt-3">Sumber: API alquran.cloud (teks Utsmani dan terjemahan Indonesia). Untuk keperluan ibadah dan kutipan resmi, rujuk mushaf dan terjemahan Kemenag.</p>';
+    const $ = s => Util.$(s, root), cache = {}; let list = [];
+    const fill = () => { const q = $('#qn-f').value.trim().toLowerCase(); $('#qn-s').innerHTML = list.filter(s => !q || (s.number + ' ' + s.englishName + ' ' + s.name).toLowerCase().includes(q)).map(s => '<option value="' + s.number + '">' + s.number + '. ' + esc(s.englishName) + ' (' + s.numberOfAyahs + ' ayat)</option>').join(''); };
+    async function load() {
+      const n = $('#qn-s').value, st = $('#qn-st'); if (!n) return; setSt(st, 'Memuat surah...');
+      try {
+        if (!cache[n]) { const r = await fetch('https://api.alquran.cloud/v1/surah/' + n + '/editions/quran-uthmani,id.indonesian'); if (!r.ok) throw 0; cache[n] = (await r.json()).data; }
+        const ar = cache[n][0], id = cache[n][1]; $('#qn-out').innerHTML = '';
+        const h = document.createElement('div'); h.className = 'stat text-center'; h.innerHTML = '<b style="font-size:1.4rem">' + esc(ar.name) + '</b><span class="muted text-sm block">' + esc(ar.englishName) + ' · ' + esc(ar.revelationType) + ' · ' + ar.numberOfAyahs + ' ayat</span>'; $('#qn-out').appendChild(h);
+        ar.ayahs.forEach((a, i) => { const d = document.createElement('div'); d.className = 'stat'; const t = document.createElement('div'); t.dir = 'rtl'; t.style.cssText = 'font-size:1.6rem;line-height:2.4;font-family:"Traditional Arabic","Scheherazade New","Noto Naskh Arabic",serif'; t.textContent = a.text; const p = document.createElement('p'); p.className = 'text-sm mt-2'; p.textContent = a.numberInSurah + '. ' + (id.ayahs[i] ? id.ayahs[i].text : ''); d.appendChild(t); d.appendChild(p); $('#qn-out').appendChild(d); });
+        setSt(st, '', '#1f8a4c');
+      } catch (e) { setSt(st, 'Gagal memuat surah. Periksa koneksi internet lalu coba lagi.', '#d93a3a'); }
+    }
+    $('#qn-f').addEventListener('input', () => { fill(); load(); }); $('#qn-s').addEventListener('change', load);
+    (async () => { setSt($('#qn-st'), 'Memuat daftar surah...'); try { const r = await fetch('https://api.alquran.cloud/v1/surah'); if (!r.ok) throw 0; list = (await r.json()).data; fill(); load(); } catch (e) { setSt($('#qn-st'), 'Gagal memuat daftar surah. Periksa koneksi internet.', '#d93a3a'); } })();
+  }
+});
+
+/* =====================================================================
+   LOGIN GOOGLE (Firebase Authentication) + MODE DEMO LOKAL
+   Isi FIREBASE_CONFIG dari Firebase Console > Project settings > Your apps (Web).
+   Jika apiKey masih kosong, aplikasi otomatis memakai login demo lokal.
+   ===================================================================== */
+/* Umpan balik visual tombol Salin: label berubah jadi "✓ Tersalin" sebentar */
+Util.flash = function () {
+  const b = Util._btn;
+  if (!b || Date.now() - Util._bt > 3000 || !b.isConnected) return;
+  if (!b.dataset.orig) b.dataset.orig = b.innerHTML;
+  b.innerHTML = '✓ Tersalin'; b.classList.add('copied');
+  clearTimeout(b._ft);
+  b._ft = setTimeout(() => { b.innerHTML = b.dataset.orig; b.classList.remove('copied'); delete b.dataset.orig; }, 1500);
+};
+document.addEventListener('click', e => { const b = e.target.closest('button'); if (b) { Util._btn = b; Util._bt = Date.now(); } }, true);
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-copy-rows]'); if (!b || !b.previousElementSibling) return;
+  Util.copy(Array.from(b.previousElementSibling.querySelectorAll('div.stat')).map(r => r.querySelector('dt').textContent + ': ' + r.querySelector('dd').textContent).join('\n'));
+});
+
+const FIREBASE_CONFIG = {
+  apiKey: '',
+  authDomain: '',
+  projectId: '',
+  storageBucket: '',
+  messagingSenderId: '',
+  appId: ''
+};
+const Auth = {
+  user: null, favs: new Set(), fb: null, cb: null,
+  key() { return 'ryntax-fav-' + (this.user ? this.user.uid : 'guest'); },
+  loadFavs() { this.favs = new Set(store.get(this.key(), [])); },
+  toggleFav(id) { if (this.favs.has(id)) this.favs.delete(id); else this.favs.add(id); store.set(this.key(), Array.from(this.favs)); this.render(); if (this.cb) this.cb(); },
+  async init(cb) {
+    this.cb = cb; document.addEventListener('click', e => { const p = Util.$('#auth-pop'); if (p && !Util.$('#auth-box').contains(e.target)) p.remove(); });
+    if (FIREBASE_CONFIG.apiKey) {
+      try {
+        const A = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js'), B = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js');
+        const auth = B.getAuth(A.initializeApp(FIREBASE_CONFIG)); this.fb = { B: B, auth: auth };
+        B.onAuthStateChanged(auth, u => { this.user = u ? { uid: u.uid, name: u.displayName || 'Pengguna', email: u.email || '', photo: u.photoURL || '' } : null; this.loadFavs(); this.render(); if (this.cb) this.cb(); });
+        return;
+      } catch (e) { this.fb = null; Util.toast('Firebase gagal dimuat, memakai mode demo'); }
+    }
+    this.user = store.get('ryntax-demo-user', null); this.loadFavs(); this.render(); if (this.cb) this.cb();
+  },
+  async signIn() {
+    if (this.fb) { try { await this.fb.B.signInWithPopup(this.fb.auth, new this.fb.B.GoogleAuthProvider()); } catch (e) { Util.toast('Login gagal: ' + (e.code || 'dibatalkan')); } return; }
+    this.user = { uid: 'demo', name: 'Pengguna Demo', email: 'demo@ryntax.local', photo: '' }; store.set('ryntax-demo-user', this.user); this.loadFavs(); this.render(); if (this.cb) this.cb(); Util.toast('Login demo berhasil');
+  },
+  async signOut() {
+    if (this.fb) { try { await this.fb.B.signOut(this.fb.auth); } catch (e) { Util.toast('Logout gagal'); } return; }
+    this.user = null; store.set('ryntax-demo-user', null); this.loadFavs(); this.render(); if (this.cb) this.cb();
+  },
+  render() {
+    const box = Util.$('#auth-box'), u = this.user, logo = Util.$('#ryntax-logo').src;
+    if (!u) { box.innerHTML = '<button id="auth-in" class="btn btn-primary" type="button" style="display:inline-flex;align-items:center;gap:.4rem"><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="#111" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3zM12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.600 0-4.800-1.800-5.600-4.100H3.100v2.600A10 10 0 0 0 12 22zM6.400 14c-.2-.6-.3-1.300-.3-2s.1-1.400.3-2V7.400H3.100a10 10 0 0 0 0 9.200zM12 5.900c1.500 0 2.800.5 3.800 1.500l2.900-2.900A10 10 0 0 0 3.100 7.400L6.400 10C7.200 7.700 9.400 5.900 12 5.900z"/></svg><span class="hidden sm:inline">Login dengan Google</span><span class="sm:hidden">Login</span></button>'; Util.$('#auth-in').addEventListener('click', () => this.signIn()); return; }
+    const photo = /^https:\/\//.test(u.photo) ? u.photo : logo;
+    box.innerHTML = '<button id="auth-av" class="icon-btn" type="button" aria-label="Profil" style="padding:0;overflow:hidden"><img src="' + esc(photo) + '" alt="" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover"></button>';
+    Util.$('#auth-av').addEventListener('click', e => {
+      e.stopPropagation(); const old = Util.$('#auth-pop'); if (old) { old.remove(); return; }
+      const p = document.createElement('div'); p.id = 'auth-pop'; p.className = 'surface'; p.style.boxShadow = '5px 5px 0 var(--line)';
+      p.innerHTML = '<div class="flex items-center gap-3"><img src="' + esc(photo) + '" alt="" referrerpolicy="no-referrer" style="width:3.2rem;height:3.2rem;border-radius:50%;border:2.5px solid #111;object-fit:cover"><div style="min-width:0"><b class="block truncate">' + esc(u.name) + '</b><span class="muted text-xs block truncate">' + esc(u.email) + '</span></div></div><p class="text-sm mt-3">' + (this.fb ? 'Masuk dengan Google' : '<span class="badge" style="margin:0">MODE DEMO</span>') + '</p><p class="text-sm mt-2">Tool favorit: <b>' + this.favs.size + '</b></p><button id="auth-out" class="btn mt-3" type="button" style="width:100%">Logout</button>';
+      box.appendChild(p); Util.$('#auth-out').addEventListener('click', () => { p.remove(); this.signOut(); });
+    });
+  }
+};
+
+/* =====================================================================
+   BAGIAN 3 — APLIKASI (daftar, pencarian, filter, tampilan tool, tema)
+   Bagian ini tidak perlu diubah saat menambah tool baru.
+   ===================================================================== */
+const App = {
+  category: 'All',
+  query: '',
+
+  init() {
+    this.categoryLabels = { All: 'Semua' };
+    Util.$('#search').addEventListener('input', e => { this.query = e.target.value.trim().toLowerCase(); this.renderList(); });
+    Util.$('#back').addEventListener('click', () => { location.hash = ''; });
+    Util.$('#logo').addEventListener('click', () => { Util.$('#search').value = ''; this.query = ''; this.category = 'All'; });
+    Util.$('#theme-toggle').addEventListener('click', () => this.toggleTheme());
+    window.addEventListener('hashchange', () => this.route());
+    this.updateThemeIcon();
+    Auth.init(() => { this.renderChips(); this.renderList(); });
+    this.renderChips();
+    this.renderList();
+    this.route();
+  },
+
+  toggleTheme() {
+    const dark = document.documentElement.classList.toggle('dark');
+    try { localStorage.setItem('alltools-theme', dark ? 'dark' : 'light'); } catch (e) { /* abaikan */ }
+    this.updateThemeIcon();
+  },
+  updateThemeIcon() {
+    const dark = document.documentElement.classList.contains('dark');
+    Util.$('#theme-toggle').innerHTML = dark
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  },
+
+  renderChips() {
+    const cats = ['All', '★ Favorit'].concat(Array.from(new Set(TOOLS.map(t => t.category))));
+    const box = Util.$('#chips');
+    box.innerHTML = '';
+    cats.forEach(c => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'chip' + (c === this.category ? ' active' : '');
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', c === this.category);
+      b.textContent = c;
+      b.addEventListener('click', () => { this.category = c; this.renderChips(); this.renderList(); });
+      box.appendChild(b);
+    });
+  },
+
+  renderList() {
+    const q = this.query;
+    const list = TOOLS.filter(t => {
+      const inCat = this.category === 'All' || (this.category === '★ Favorit' ? Auth.favs.has(t.id) : t.category === this.category);
+      const hay = (t.name + ' ' + t.description + ' ' + t.category + ' ' + (t.keywords || '')).toLowerCase();
+      return inCat && (!q || q.split(/\s+/).every(w => hay.includes(w)));
+    });
+    const grid = Util.$('#grid');
+    grid.innerHTML = '';
+    const rank = t => (t.id === 'ryntax-nokos' ? -3 : 0) + ([].concat(t.badge || []).includes('DISEMATKAN') ? -2 : 0) + (Auth.favs.has(t.id) ? -1 : 0);
+    list.sort((a, b) => rank(a) - rank(b));
+    list.forEach(t => {
+      const a = document.createElement('a');
+      a.href = '#' + t.id;
+      a.className = 'tool-card block c' + (TOOLS.indexOf(t) % 5);
+      a.innerHTML =
+        '<button type="button" class="fav" aria-label="Favoritkan ' + t.name + '">' + (Auth.favs.has(t.id) ? '★' : '☆') + '</button>' +
+        '<span class="tool-icon">' + Util.icon(t.icon) + '</span>' +
+        '<h3 class="font-extrabold text-base mt-3 leading-tight">' + t.name + '</h3>' +
+        [].concat(t.badge || []).map(b => '<span class="badge" style="margin-right:.25rem">' + b + '</span>').join('') +
+        '<p class="muted text-sm mt-1">' + t.description + '</p>' +
+        '<span class="chip mt-3 inline-block" style="cursor:inherit">' + t.category + '</span>';
+      a.querySelector('.fav').addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); Auth.toggleFav(t.id); });
+      grid.appendChild(a);
+    });
+    Util.$('#empty').classList.toggle('hidden', list.length > 0);
+    Util.$('#tool-count').textContent = TOOLS.length + ' tools tersedia';
+    Util.$('#grid-count').textContent = list.length + ' dari ' + TOOLS.length + ' tools';
+  },
+
+  route() {
+    const id = decodeURIComponent(location.hash.replace(/^#/, ''));
+    const tool = TOOLS.find(t => t.id === id);
+    const list = Util.$('#view-list'), view = Util.$('#view-tool');
+    if (window.speechSynthesis) speechSynthesis.cancel();
+    if (!tool) {
+      Util.$('#tool-root').innerHTML = '';
+      view.classList.add('hidden');
+      list.classList.remove('hidden');
+      document.title = 'All Tools – Kumpulan alat utilitas online';
+      return;
+    }
+    list.classList.add('hidden');
+    view.classList.remove('hidden');
+    Util.$('#tool-icon').innerHTML = Util.icon(tool.icon);
+    Util.$('#tool-title').textContent = tool.name;
+    Util.$('#tool-desc').textContent = tool.description;
+    const holder = Util.$('#tool-root');
+    holder.innerHTML = '';
+    const root = document.createElement('div');
+    holder.appendChild(root);
+    tool.mount(root);
+    document.title = tool.name + ' – All Tools';
+    window.scrollTo(0, 0);
+  }
+};
+
+App.init();
+</script>
+</body>
+</html>
