@@ -1,6 +1,6 @@
 // Proxy AI: kunci GEMINI_API_KEY hanya ada di environment server, tidak pernah dikirim ke browser.
 const L = require('./_lib');
-const MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+const MODEL = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 exports.handler = async event => {
   try {
     if (event.httpMethod !== 'POST') return L.json(405, { error: 'Metode tidak diizinkan.' });
